@@ -34,6 +34,6 @@ Data example:
     subName: 'Level 1', //name of your sub
     months: 2 // month since user is sub
     years: 10 // years since user is sub
-    tip: 2 // tip amount
+    tip: '2 euros' // tip amount
 }
 ```

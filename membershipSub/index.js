@@ -33,18 +33,35 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     if (data.tip) {
       //Si l'utisateur est deja sub
       if (data.subName) {
-        if (data.years) {
+        if (
+          data.years !== 0 &&
+          data.years !== "null" &&
+          data.years !== "0" &&
+          data.years !== undefined
+        ) {
           newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
             <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de ${data.tip} !</p>
           </div>
         `;
-        } else {
+        } else if (
+          data.months !== 0 &&
+          data.months !== "null" &&
+          data.months !== "0" &&
+          data.months !== undefined
+        ) {
           newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
             <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de ${data.tip} !</p>
+          </div>
+        `;
+        } else {
+          newElement.innerHTML = `
+          <div class='card slideDown'>
+            <div class='logo'></div>
+            <p>Abonné ${data.userName} Niveau ${data.subName}, merci pour le don de ${data.tip} !</p>
           </div>
         `;
         }
@@ -53,7 +70,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
         newElement.innerHTML = `
             <div class='card slideDown'>
               <div class='logo'></div>
-              <p>Don de ${data.tip}euros: merci ${data.userName}</p>
+              <p>Don de ${data.tip}: merci ${data.userName}</p>
             </div>
           `;
       }
