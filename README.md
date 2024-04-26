@@ -54,7 +54,7 @@ Data example:
 {
     userName: 'Lou', // user name
     subName: 'Level 1', //name of your sub
-    mounths: 2 // month since user is sub
+    months: 2 // month since user is sub
     years: 10 // years since user is sub
 }
 
@@ -67,6 +67,6 @@ Data example:
 {
     userName: 'Lou', // user name
     subName: 'Level 1', //name of your sub
-    mounths: 2 // month since user is sub
+    months: 2 // month since user is sub
 }
 ```
