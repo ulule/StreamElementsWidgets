@@ -78,3 +78,8 @@ window.addEventListener("onWidgetLoad", async (obj) => {
 });
 
 ```
+
+And don't forget to add this line into your HTML if you create your own widget and use the code above :
+```
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+```
