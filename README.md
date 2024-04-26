@@ -25,29 +25,7 @@ HTML :
 
 ### Our event you can use to to custom your own widget :
 
-"newUserSub" : New ulule sub <br/>
-Data example:
-
-```
-{
-    userName: 'Lou', // user name
-    subName: 'Level 1', //name of your sub
-}
-
-```
-
-"tip": Tip<br/>
-Data example:
-
-```
-{
-    tip: 10, // amount of the tip
-    userName: 'Lou', // user name
-}
-
-```
-
-"subYearsWithTip": User with sub making a donation<br/>
+"sub": <br/>
 Data example:
 
 ```
@@ -57,17 +35,5 @@ Data example:
     months: 2 // month since user is sub
     years: 10 // years since user is sub
     tip: 2 // tip amount
-}
-
-```
-
-"birth": Birth event<br/>
-Data example:
-
-```
-{
-    userName: 'Lou', // user name
-    subName: 'Level 1', //name of your sub
-    months: 2 // month since user is sub
 }
 ```
