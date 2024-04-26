@@ -2,6 +2,8 @@
 
 To install our widget, you can use the files in our repository or use the CDN links so that they are always up-to-date. We recommend that you use the code below, which you can copy and paste into your new custom widget; this code contains all the CSS and JS you need.
 
+Warning: CND have 7 days cache, we are checking another way to do this.
+
 ### Steps:
 
 - Create a new custom widget in your StreamElements dashboard.
