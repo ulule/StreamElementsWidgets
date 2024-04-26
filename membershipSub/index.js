@@ -60,14 +60,14 @@ window.addEventListener("onWidgetLoad", async (obj) => {
       newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.mounths} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
+            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
           </div>
         `;
     } else {
       newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.mounths} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
+            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
           </div>
         `;
     }
@@ -82,7 +82,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Merci à ${data.userName} abonné Ulule Niveau ${data.subName} depuis ${data.mounths}/ mois !</p>
+            <p>Merci à ${data.userName} abonné Ulule Niveau ${data.subName} depuis ${data.months}/ mois !</p>
           </div>
         `;
 
