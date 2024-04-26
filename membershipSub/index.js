@@ -82,7 +82,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Merci à ${data.name} abonné Ulule Niveau ${data.subName} depuis ${data.mounths}/ mois !</p>
+            <p>Merci à ${data.userName} abonné Ulule Niveau ${data.subName} depuis ${data.mounths}/ mois !</p>
           </div>
         `;
 
