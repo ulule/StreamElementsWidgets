@@ -87,7 +87,7 @@ And don't forget to add this line into your HTML if you create your own widget a
 ### Test:
 
 If you are a developper and understand this, you can made a `POST` with this data for example :
-``
+```
 {
     "event": "sub",
     "data": {
