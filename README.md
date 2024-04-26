@@ -83,3 +83,24 @@ And don't forget to add this line into your HTML if you create your own widget a
 ```
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 ```
+
+### Test:
+
+If you are a developper and understand this, you can made a `POST` with this data for example :
+``
+{
+    "event": "sub",
+    "data": {
+        "subName": "Nom",
+        "userName": "Mathilde",
+        "months": 1,
+        "years": 3,
+        "tip": "20 euros"
+    }
+}
+```
+
+```
+https://api.streamelements.com/kappa/v2/channels/[channel-id-top-replace]/socket
+```
+don't forget to add your bearer key from streamelements to the header too.
