@@ -24,67 +24,55 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     return logo.outerHTML;
   }
 
-  // Nouvel Abonnement Ulule
-  socket.on("newUserSub", (data) => {
+  socket.on("sub", (data) => {
     const newElement = document.createElement("div");
 
-    newElement.innerHTML = `
-        <div class='card slideDown'>
-          <div class='logo'></div>
-          <p>Nouvel abonnement ulule <span>${data.subName}</span> : merci <span>${data.userName}</span> !</p>
-        </div>
-      `;
-
-    showElement(newElement);
-  });
-
-  // Don
-  socket.on("tip", (data) => {
-    const newElement = document.createElement("div");
-
-    newElement.innerHTML = `
-        <div class='card slideDown'>
-          <div class='logo'></div>
-          <p>Don de ${data.tip}euros: merci ${data.userName}</p>
-        </div>
-      `;
-
-    showElement(newElement);
-  });
-
-  // User qui est sub et qui fait un don
-  socket.on("subYearsWithTip", (data) => {
-    const newElement = document.createElement("div");
-
-    if (data.years) {
-      newElement.innerHTML = `
+    //Si il y a un tip
+    if (data.tip) {
+      //Si l'utisateur est deja sub
+      if (data.subName) {
+        if (data.years) {
+          newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
             <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de ${data.tip} !</p>
           </div>
         `;
-    } else {
-      newElement.innerHTML = `
+        } else {
+          newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
             <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de ${data.tip} !</p>
           </div>
         `;
-    }
-
-    showElement(newElement);
-  });
-
-  // Update de sub sans don
-  socket.on("birth", (data) => {
-    const newElement = document.createElement("div");
-
-    newElement.innerHTML = `
+        }
+      } else {
+        // Si c'est juste un don
+        newElement.innerHTML = `
+            <div class='card slideDown'>
+              <div class='logo'></div>
+              <p>Don de ${data.tip}euros: merci ${data.userName}</p>
+            </div>
+          `;
+      }
+    } else {
+      // Si l'utilisateur est deja sub et sans don
+      if (data.months) {
+        newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
             <p>Merci à ${data.userName} abonné Ulule Niveau ${data.subName} depuis ${data.months}/ mois !</p>
           </div>
         `;
+      }
+
+      newElement.innerHTML = `
+        <div class='card slideDown'>
+          <div class='logo'></div>
+          <p>Nouvel abonnement ulule <span>${data.subName}</span> : merci <span>${data.userName}</span> !</p>
+        </div>
+      `;
+    }
 
     showElement(newElement);
   });
