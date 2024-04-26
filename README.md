@@ -27,7 +27,7 @@ HTML :
 
 ### Our event you can use to to custom your own widget :
 
-"sub": <br/>
+Event name: "sub": <br/>
 Data example:
 
 ```
@@ -38,4 +38,43 @@ Data example:
     years: 10 // years since user is sub
     tip: '2 euros' // tip amount
 }
+```
+
+You can use this code for example : 
+```
+window.addEventListener("onWidgetLoad", async (obj) => {
+  apiToken = obj.detail.channel.apiToken;
+
+  const socket = io("https://realtime.streamelements.com", {
+    transports: ["websocket"],
+  });
+  socket.on("connect", onConnect);
+  socket.on("disconnect", onDisconnect);
+  socket.on("authenticated", onAuthenticated);
+  socket.on("unauthorized", console.error);
+
+  socket.on("sub", (data) => {
+    const newElement = document.createElement("div");
+    console.log(data);
+    // Votre code ici 
+  });
+
+  function onConnect() {
+    console.log("Successfully connected to the websocket");
+    // socket.emit('authenticate', {method: 'oauth2', token: accessToken});
+    //socket.emit('authenticate', {method: 'jwt', token: jwt});
+    socket.emit("authenticate", { method: "apikey", token: apiToken });
+  }
+
+  function onDisconnect() {
+    console.log("Disconnected from websocket");
+    // Reconnect
+    onConnect();
+  }
+
+  function onAuthenticated(data) {
+    console.log(`Successfully connected to channel `);
+  }
+});
+
 ```
