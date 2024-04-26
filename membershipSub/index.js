@@ -27,6 +27,8 @@ window.addEventListener("onWidgetLoad", async (obj) => {
   socket.on("sub", (data) => {
     const newElement = document.createElement("div");
 
+    console.log(data);
+
     //Si il y a un tip
     if (data.tip) {
       //Si l'utisateur est deja sub
