@@ -52,22 +52,22 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     showElement(newElement);
   });
 
-  // Don Ponctuel avec sub année
-  socket.on("subYears", (data) => {
+  // User qui est sub et qui fait un don
+  socket.on("subYearsWithTip", (data) => {
     const newElement = document.createElement("div");
 
     if (data.years) {
       newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
+            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de ${data.tip} !</p>
           </div>
         `;
     } else {
       newElement.innerHTML = `
           <div class='card slideDown'>
             <div class='logo'></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de <span id='subTipUserAmount'></span> !</p>
+            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de ${data.tip} !</p>
           </div>
         `;
     }
@@ -75,7 +75,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
     showElement(newElement);
   });
 
-  // Anniversaire
+  // Update de sub sans don
   socket.on("birth", (data) => {
     const newElement = document.createElement("div");
 

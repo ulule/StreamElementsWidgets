@@ -47,7 +47,7 @@ Data example:
 
 ```
 
-"subYears": Reccurent sub<br/>
+"subYearsWithTip": User with sub making a donation<br/>
 Data example:
 
 ```
@@ -56,6 +56,7 @@ Data example:
     subName: 'Level 1', //name of your sub
     months: 2 // month since user is sub
     years: 10 // years since user is sub
+    tip: 2 // tip amount
 }
 
 ```
