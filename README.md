@@ -25,7 +25,7 @@ HTML :
 <div id='ulule'></div>
 ```
 
-### Our event you can use to to custom your own widget :
+### Our event you can use to customize your own widget :
 
 Event name: "sub": <br/>
 Data example:
