@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css?family=Oxanium:400,500");
+
+* {
+  color: {{fontColor}};
+  font-family: {{fontFamily}}, sans-serif;
+  font-size: {{fontSize}}px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.progress-bar {
+  border: 1px solid {{progressBorderColor}};
+  border-radius: {{progressBorderRadius}}px;
+  display: none;
+  height: 30px;
+  margin: 0 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar .progress-bar__content {
+  background-color: {{progressBarColor}};
+  color: {{progressBarFontColor}};
+  display: block;
+  font-size: {{progressBarFontSize}}px;
+  height: 100%;
+  line-height: 30px;
+  position: absolute;
+  text-align: end;
+  width: 0;
+}
+
+.progress-bar .progress-bar__content::after {
+  content: '';
+  display: inline;
+  padding: 4px;
+}
+
+.amount-container {
+  margin: 20px 20px 8px;
+}
+
+.amount-container__goal {
+  font-size: calc({{fontSize}}px - {{fontSize}}px * 0.4);
+}
