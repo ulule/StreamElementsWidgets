@@ -10,6 +10,7 @@
 }
 
 .progress-bar {
+  background-color: {{progressBackgroundColor}};
   border: 1px solid {{progressBorderColor}};
   border-radius: {{progressBorderRadius}}px;
   display: none;
