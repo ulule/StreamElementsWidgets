@@ -7,7 +7,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
   if (!projectId) {
     console.error(`[ulule/stats] Expected a valid project ID, got ${projectId} instead`);
     if (status.isEditorMode) {
-      $('.amount-container').html(`<div>Please input a valid project ID</div>`);
+      $('.amount').html(`<div>Please input a valid project ID</div>`);
     }
     return
   };
@@ -21,7 +21,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
         duration: 3000,
         easing:'swing',
         step: function() {
-          $('.main-container').html(`<div>${Math.round(this.fakeAmount)}<span class="goal"> / 5000<span></div>`);
+          $('.amount').html(`<div>${Math.round(this.fakeAmount)}<span class="goal"> / 5000<span></div>`);
         }
       });
       fakeAmount = futureFakeAmount;
@@ -60,19 +60,32 @@ window.addEventListener('onWidgetLoad', async function (obj) {
         duration: 3000,
         easing:'swing',
         step: function() {
-          const goalElement = goal > 0 ? `<span class="amount-container__goal"> / ${goal.toLocaleString(LOCALE)} ${suffix}<span></div>` : '';
-          $('.amount-container').html(`<div>${Math.round(this.amount).toLocaleString(LOCALE)} ${isFinancial ? suffix : ''}${goalElement}`);
+          const goalElement = goal > 0 ? `<span class="amount__goal"> / ${goal.toLocaleString(LOCALE)} ${suffix}<span></div>` : '';
+          $('.amount').html(`<div>${Math.round(this.amount).toLocaleString(LOCALE)} ${isFinancial ? suffix : ''}${goalElement}`);
         }
       });
       amount = committed;
 
       if (goal > 0) {
-        const progress = Math.floor(committed / goal * 100)
+        const progress = Math.floor(committed / goal * 100);
         $(".progress-bar").show();
-        $(".progress-bar__content").animate({
-          width: `${progress > 100 ? 100 : progress}%`,
-        }, 1000);
-        $(".progress-bar__content").text(`${progress}%`);
+        if ({{targetPercentage}} > 100) {
+          stretchGoalPercentage = (progress / {{targetPercentage}}) * 100;
+          console.log('stretchGoal', stretchGoalPercentage);
+          $(".progress-bar__content").animate({
+            easing: 'swing',
+            width: `${stretchGoalPercentage > 100 ? 100 : stretchGoalPercentage}%`,
+          }, 1000);
+          if (stretchGoalPercentage < 100) {
+            $(".stretch-goal").text(`Prochain palier : {{targetPercentage}}%`);
+          }
+          $(".progress-bar__content").text(`${progress}%`);
+        } else {
+          $(".progress-bar__content").animate({
+            width: `${progress > 100 ? 100 : progress}%`,
+          }, 1000);
+          $(".progress-bar__content").text(`${progress}%`);
+        }
       }
     } catch (error) {
       console.error('[ulule/stats] Failed to fetch stats', error.message);

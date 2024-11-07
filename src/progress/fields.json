@@ -36,6 +36,13 @@
     "type": "number",
     "value": 16
   },
+  "targetPercentage": {
+    "label": "Pourcentage cible",
+    "min": 100,
+    "step": 1,
+    "type": "number",
+    "value": 100
+  },
   "progressBackgroundColor": {
     "label": "Couleur de fond de la progression",
     "type": "colorpicker",
