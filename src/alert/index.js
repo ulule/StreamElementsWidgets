@@ -95,7 +95,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p>Nouvel abonnement ulule <span>${data.subName}</span> : merci <span>${data.userName}</span> !</p>
+          <p>Nouvel abonnement Ulule <span>${data.subName}</span> : merci <span>${data.userName}</span> !</p>
         </div>`
     }
 
