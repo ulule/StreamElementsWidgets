@@ -29,7 +29,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
   // END DEMO
 
   let amount;
-  const url = `https://s3-eu-west-1.amazonaws.com/com.ulule.data/projects/{{projectNumericalId}}/stats.json?cachebuster=${Date.now()}`;
+  const url = `https://data.ulule.com/projects/{{projectNumericalId}}/stats.json?cachebuster=${Date.now()}`;
   const refreshInterval = {{refreshInterval}} * 1000 || 10000;
 
   fetchStats();
