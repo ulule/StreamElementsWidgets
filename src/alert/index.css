@@ -91,3 +91,9 @@
   align-items: center;
   margin-bottom: 10px;
 }
+
+#subname,
+#tip,
+#username {
+  font-weight: bold;
+}
