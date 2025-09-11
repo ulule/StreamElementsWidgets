@@ -34,14 +34,14 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p>${userName} vient de choisir la contrepartie « ${data.rewardName} » !</p>
+          <p><span id="username">${userName}</span> vient de choisir la contrepartie <span id="subname">« ${data.rewardName} »</span> !</p>
         </div>`
     } else {
       // Cas de contribution avec don libre
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p>${userName} vient de choisir « ${data.rewardName} » + un don de ${tip} € !</p>
+          <p><span id="username">${userName}</span> vient de choisir <span id="subname">« ${data.rewardName} »</span> + un don de <span id="tip">${tip} ${data.currency}</span> !</p>
         </div>`
     }
 
@@ -51,7 +51,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
   socket.on('sub', (data) => {
     const cardElement = document.createElement('div')
 
-    //Si il y a un tip
+    // Si il y a un don
     if (data.tip) {
       // Cas d'utilisateur·ice déja abonné·e
       if (data.subName) {
@@ -59,28 +59,37 @@ window.addEventListener('onWidgetLoad', async (obj) => {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.years} an(s) et ${data.months} mois, merci pour le don de ${data.tip} !</p>
+            <p>Merci <span id="username">${data.userName}</span> pour le don de <span id="tip">${data.tip} ${data.currency}</span> ! Abonné·e au niveau <span id="subname">"${data.subName}"</span> depuis ${data.years} an(s) et ${data.months} mois</p>
           </div>`
         } else if (data.months !== 0 && data.months !== 'null' && data.months !== '0' && data.months !== undefined) {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName} depuis ${data.months} mois, merci pour le don de ${data.tip} !</p>
+            <p>Merci <span id="username">${data.userName}</span> pour le don de <span id="tip">${data.tip} ${data.currency}</span> ! Abonné·e au niveau <span id="subname">"${data.subName}"</span> depuis ${data.months} mois</p>
           </div>`
         } else {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            <p>Abonné ${data.userName} Niveau ${data.subName}, merci pour le don de ${data.tip} !</p>
+            <p>Merci <span id="username">${data.userName}</span> pour le don de <span id="tip">${data.tip} ${data.currency}</span> ! Abonné·e au niveau <span id="subname">"${data.subName}"</span></p>
           </div>`
         }
       } else {
-        // Si c'est juste un don
-        cardElement.innerHTML = `
+        // Si c'est un don récurrent
+        if (data.isRecurringDonation === 'True' && data.recurringDonationAmount > 0) {
+          cardElement.innerHTML = `
             <div class="card slideDown">
               <div class="logo"></div>
-              <p>Don de ${data.tip}: merci ${data.userName} !</p>
+              <p>Merci <span id="username">${data.userName}</span> pour le don mensuel de <span id="tip">${data.recurringDonationAmount} ${data.currency}</span> !</p>
             </div>`
+        } else {
+          // Si c'est un don unique
+          cardElement.innerHTML = `
+              <div class="card slideDown">
+                <div class="logo"></div>
+                <p>Merci <span id="username">${data.userName}</span> pour le don de <span id="tip">${data.tip} ${data.currency}</span> !</p>
+              </div>`
+        }
       }
     } else {
       // Cas d'utilisateur·ice déja abonné·e, sans don
@@ -88,14 +97,14 @@ window.addEventListener('onWidgetLoad', async (obj) => {
         cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            <p>Merci à ${data.userName} abonné Ulule Niveau ${data.subName} depuis ${data.months} mois !</p>
+            <p>Merci <span id="username">${data.userName}</span> pour les ${data.months} mois d'abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
           </div>`
       }
 
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p>Nouvel abonnement Ulule <span>${data.subName}</span> : merci <span>${data.userName}</span> !</p>
+          <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
         </div>`
     }
 
