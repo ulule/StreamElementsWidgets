@@ -101,11 +101,19 @@ window.addEventListener('onWidgetLoad', async (obj) => {
           </div>`
       }
 
-      cardElement.innerHTML = `
-        <div class="card slideDown">
-          <div class="logo"></div>
-          <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
-        </div>`
+      if (data.subName) {
+        cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
+          </div>`        
+      } else {
+        cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement gratuit !</p>
+          </div>`
+      }
     }
 
     showElement(cardElement)
