@@ -93,26 +93,33 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       }
     } else {
       // Cas d'utilisateur·ice déja abonné·e, sans don
-      if (data.months) {
+      if (data.years !== 0 && data.years !== 'null' && data.years !== '0' && data.years !== undefined) {
+        cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${data.userName}</span> pour les ${data.years} an(s) et ${data.months} mois d'abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
+          </div>`
+      } else if (data.months !== 0 && data.months !== 'null' && data.months !== '0' && data.months !== undefined) {
         cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
             <p>Merci <span id="username">${data.userName}</span> pour les ${data.months} mois d'abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
           </div>`
-      }
-
-      if (data.subName) {
+      } else if (data.subName) {
         cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
             <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement au niveau <span id="subname">"${data.subName}"</span> !</p>
           </div>`        
       } else {
+        // We're disabling free tier notifications for now. Shall be configurable later.
+        /**
         cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
             <p>Merci <span id="username">${data.userName}</span> pour le nouvel abonnement gratuit !</p>
           </div>`
+        */
       }
     }
 
