@@ -1,17 +1,17 @@
 const LOCALE = 'fr-FR'
 
 window.addEventListener('onWidgetLoad', async function (obj) {
-  const status = await SE_API.getOverlayStatus();
-  const projectId = {{projectNumericalId}};
+  const status = await SE_API.getOverlayStatus()
+  const projectId = obj.fieldData.projectNumericalId
 
   if (!projectId) {
-    console.error(`[ulule/stats] Expected a valid project ID, got ${projectId} instead`);
+    console.error(`[ulule/stats] Expected a valid project ID, got ${projectId} instead`)
     if (status.isEditorMode) {
-      $('.amount').html(`<div>Please input a valid project ID</div>`);
+      $('.amount').html(`<div>Please input a valid project ID</div>`)
     }
     return
-  };
-  console.log('[ulule/stats] Widget loaded for project', projectId);
+  }
+  console.log('[ulule/stats] Widget loaded for project', projectId)
 
   // DEMO
   /*let fakeAmount = 2467;
@@ -28,67 +28,79 @@ window.addEventListener('onWidgetLoad', async function (obj) {
     }, 5000);*/
   // END DEMO
 
-  let amount;
-  const url = `https://data.ulule.com/projects/{{projectNumericalId}}/stats.json?cachebuster=${Date.now()}`;
-  const refreshInterval = {{refreshInterval}} * 1000 || 10000;
+  let amount
+  const url = `https://data.ulule.com/projects/${projectId}/stats.json?cachebuster=${Date.now()}`
+  const refreshInterval = obj.fieldData.refreshInterval * 1000 || 10000
 
-  fetchStats();
+  fetchStats()
   setInterval(async () => {
-    fetchStats();
-  }, refreshInterval);
+    fetchStats()
+  }, refreshInterval)
 
   async function fetchStats() {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url)
       if (!response.ok) {
-        throw new Error(`[ulule/stats] Response status: ${response.status}`);
+        throw new Error(`[ulule/stats] Response status: ${response.status}`)
       }
       const {
         amount_raised: amountRaised,
         committed,
         goal,
         orders_count: ordersCount,
-        supporters_count: supportersCount
-      } = await response.json();
+        supporters_count: supportersCount,
+      } = await response.json()
       if (!amount) {
-        amount = committed;
+        amount = committed
       }
       const isFinancial = amountRaised === String(committed)
-      const suffix = isFinancial ? '{{currency}}' : '{{presaleSuffix}}';
+      const suffix = isFinancial ? obj.fieldData.currency : obj.fieldData.presaleSuffix
 
-      $({amount: amount}).animate({amount: committed}, {
-        duration: 3000,
-        easing:'swing',
-        step: function() {
-          const goalElement = goal > 0 ? `<span class="amount__goal"> / ${goal.toLocaleString(LOCALE)} ${suffix}<span></div>` : '';
-          $('.amount').html(`<div>${Math.round(this.amount).toLocaleString(LOCALE)} ${isFinancial ? suffix : ''}${goalElement}`);
-        }
-      });
-      amount = committed;
+      $({ amount: amount }).animate(
+        { amount: committed },
+        {
+          duration: 3000,
+          easing: 'swing',
+          step: function () {
+            const goalElement =
+              goal > 0 ? `<span class="amount__goal"> / ${goal.toLocaleString(LOCALE)} ${suffix}<span></div>` : ''
+            $('.amount').html(
+              `<div>${Math.round(this.amount).toLocaleString(LOCALE)} ${isFinancial ? suffix : ''}${goalElement}`,
+            )
+          },
+        },
+      )
+      amount = committed
 
       if (goal > 0) {
-        const progress = Math.floor(committed / goal * 100);
-        $(".progress-bar").show();
-        if ({{targetPercentage}} > 100) {
-          stretchGoalPercentage = (progress / {{targetPercentage}}) * 100;
-          console.log('stretchGoal', stretchGoalPercentage);
-          $(".progress-bar__content").animate({
-            easing: 'swing',
-            width: `${stretchGoalPercentage > 100 ? 100 : stretchGoalPercentage}%`,
-          }, 1000);
+        const progress = Math.floor((committed / goal) * 100)
+        $('.progress-bar').show()
+        if (obj.fieldData.targetPercentage > 100) {
+          stretchGoalPercentage = (progress / obj.fieldData.targetPercentage) * 100
+          console.log('stretchGoal', stretchGoalPercentage)
+          $('.progress-bar__content').animate(
+            {
+              easing: 'swing',
+              width: `${stretchGoalPercentage > 100 ? 100 : stretchGoalPercentage}%`,
+            },
+            1000,
+          )
           if (stretchGoalPercentage < 100) {
-            $(".stretch-goal").text(`Prochain palier : {{targetPercentage}}%`);
+            $('.stretch-goal').text(`Prochain palier : ${obj.fieldData.targetPercentage}%`)
           }
-          $(".progress-bar__content").text(`${progress}%`);
+          $('.progress-bar__content').text(`${progress}%`)
         } else {
-          $(".progress-bar__content").animate({
-            width: `${progress > 100 ? 100 : progress}%`,
-          }, 1000);
-          $(".progress-bar__content").text(`${progress}%`);
+          $('.progress-bar__content').animate(
+            {
+              width: `${progress > 100 ? 100 : progress}%`,
+            },
+            1000,
+          )
+          $('.progress-bar__content').text(`${progress}%`)
         }
       }
     } catch (error) {
-      console.error('[ulule/stats] Failed to fetch stats', error.message);
+      console.error('[ulule/stats] Failed to fetch stats', error.message)
     }
   }
-});
+})
