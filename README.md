@@ -4,6 +4,8 @@ To install our widget, you can use the files in our repository or use the CDN li
 
 Warning: CND have 7 days cache, we are checking another way to do this.
 
+## Alert widget
+
 ### Steps:
 
 - Create a new custom widget in your StreamElements dashboard.
@@ -40,7 +42,8 @@ Data example:
 }
 ```
 
-You can use this code for example : 
+You can use this code for example :
+
 ```
 window.addEventListener("onWidgetLoad", async (obj) => {
   apiToken = obj.detail.channel.apiToken;
@@ -56,7 +59,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
   socket.on("sub", (data) => {
     const newElement = document.createElement("div");
     console.log(data);
-    // Votre code ici 
+    // Votre code ici
   });
 
   function onConnect() {
@@ -80,6 +83,7 @@ window.addEventListener("onWidgetLoad", async (obj) => {
 ```
 
 And don't forget to add this line into your HTML if you create your own widget and use the code above :
+
 ```
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 ```
@@ -87,6 +91,7 @@ And don't forget to add this line into your HTML if you create your own widget a
 ### Test:
 
 If you are a developper and understand this, you can made a `POST` with this data for example :
+
 ```
 {
     "event": "sub",
@@ -103,4 +108,32 @@ If you are a developper and understand this, you can made a `POST` with this dat
 ```
 https://api.streamelements.com/kappa/v2/channels/[channel-id-top-replace]/socket
 ```
+
 don't forget to add your bearer key from streamelements to the header too.
+
+## Progress widget
+
+### Steps:
+
+- Create a new custom widget in your StreamElements dashboard.
+- Copy and paste the provided code into the new widget.
+- Make sure to link your StreamElements ID in your backoffice to receive the events.
+  <br /><br />
+
+The code below has everything you need to get the widget up and running:
+
+HTML :
+
+```
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+<link rel="stylesheet" href='https://cdn.jsdelivr.net/gh/ulule/StreamElementsWidgets@main/src/progress/index.css' />
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script src='https://cdn.jsdelivr.net/gh/ulule/StreamElementsWidgets@main/src/progress/index.js' crossorigin="anonymous"></script>
+
+<div class="amount"></div>
+  <div class="progress-bar">
+    <span class="progress-bar__content"></span>
+  </div>
+<div class="stretch-goal"></div>
+```
