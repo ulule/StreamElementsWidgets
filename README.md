@@ -55,7 +55,7 @@ There are two different and possible payload types, dependending on the `event` 
 | `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
 | `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
 | `data.rewardName` | `string` | Yes | Reward title. | `"Ultra Deluxe Edition"` |
-| `data.userName` | `string` | No (optional) | Backer's display name. If note, show as anonymous. | `"Jane Doe"`     |
+| `data.userName` | `string` | No (optional) | Backer's display name. If none, show as anonymous. | `"Jane Doe"`     |
 | `data.tip` | `number` or `string` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `"5"` |
 
 `sub`-type event:
