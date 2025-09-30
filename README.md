@@ -1,106 +1,102 @@
-### How to install our custom widget
+# Ulule Streaming Widgets (for StreamElements)
 
-To install our widget, you can use the files in our repository or use the CDN links so that they are always up-to-date. We recommend that you use the code below, which you can copy and paste into your new custom widget; this code contains all the CSS and JS you need.
+[Ulule](https://www.ulule.com/) provides widgets to display various page stats.
 
-Warning: CND have 7 days cache, we are checking another way to do this.
+The following will list basic installation instructions, assuming you're already familiar with StreamElements and OBS (or a similar tool).
+
+----
+
+📖 ℹ️ If you need a detailed how-to, a preview or a list of supported events and interactions, please refer to **[the public documentation](https://ulule.notion.site/ulule-stream-widgets)** (only in French 🇫🇷 for now, sorry).
+
+----
+## Alert widget
+
+![Ulule Alert Widget](https://github.com/user-attachments/assets/8a6cee26-a608-4857-b155-24c198c02437)
 
 ### Steps:
 
-- Create a new custom widget in your StreamElements dashboard.
-- Copy and paste the provided code into the new widget.
-- Make sure to link your StreamElements ID in your backoffice to receive the events.
-  <br /><br />
+- Create a new Overlay in your StreamElements dashboard, and make it host a Custom Widget
+- Copy and paste the provided code into the HTML tab of the new widget:
+https://github.com/ulule/StreamElementsWidgets/blob/907dcc46029687579d715ed2f3ad5e4d54985cd3/src/alert/index.html#L1-L11
+- Save the newly created overlay
+- Share your StreamElements Account ID and JWT Token with your coach at Ulule to finish activating the widget
 
-The code below has everything you need to get the widget up and running:
+### Advanced configuration:
 
-HTML :
+Feel free to implement custom CSS code within the StreamElements CSS tab to make the widget suit your liking!
 
-```
-<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-<link rel="stylesheet" href='https://cdn.jsdelivr.net/gh/ulule/StreamElementsCustom@main/membershipSub/index.css' />
+### Advanced testing with a custom event:
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-<script src='https://cdn.jsdelivr.net/gh/ulule/StreamElementsCustom@main/membershipSub/index.js' crossorigin="anonymous"></script>
+If you're already familiar with StreamElements Custom Widget development, you can send your own test events should you want to make sure the widget meets your needs.
 
-<div id='ulule'></div>
-```
-
-### Our event you can use to customize your own widget :
-
-Event name: "sub": <br/>
-Data example:
-
-```
-{
-    userName: 'Lou', // user name
-    subName: 'Level 1', //name of your sub
-    months: 2 // month since user is sub
-    years: 10 // years since user is sub
-    tip: '2 euros' // tip amount
-}
-```
-
-You can use this code for example : 
-```
-window.addEventListener("onWidgetLoad", async (obj) => {
-  apiToken = obj.detail.channel.apiToken;
-
-  const socket = io("https://realtime.streamelements.com", {
-    transports: ["websocket"],
-  });
-  socket.on("connect", onConnect);
-  socket.on("disconnect", onDisconnect);
-  socket.on("authenticated", onAuthenticated);
-  socket.on("unauthorized", console.error);
-
-  socket.on("sub", (data) => {
-    const newElement = document.createElement("div");
-    console.log(data);
-    // Votre code ici 
-  });
-
-  function onConnect() {
-    console.log("Successfully connected to the websocket");
-    // socket.emit('authenticate', {method: 'oauth2', token: accessToken});
-    //socket.emit('authenticate', {method: 'jwt', token: jwt});
-    socket.emit("authenticate", { method: "apikey", token: apiToken });
-  }
-
-  function onDisconnect() {
-    console.log("Disconnected from websocket");
-    // Reconnect
-    onConnect();
-  }
-
-  function onAuthenticated(data) {
-    console.log(`Successfully connected to channel `);
-  }
-});
-
-```
-
-And don't forget to add this line into your HTML if you create your own widget and use the code above :
-```
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-```
-
-### Test:
-
-If you are a developper and understand this, you can made a `POST` with this data for example :
-```
+This is an exemple of the `POST` payload expected by the widget:
+```jsonc
 {
     "event": "sub",
     "data": {
-        "subName": "Nom",
-        "userName": "Mathilde",
+        "currency": "€",
         "months": 1,
+        "tip": "20", // Optional
+        "subName": "Tier 1",
+        "userName": "Jane Doe",
         "years": 3,
-        "tip": "20 euros"
     }
 }
 ```
 
+There are two different and possible payload types, dependending on the `event` value provided: `contribution` or `sub`.
+
+**Details**
+
+`contribution`-type event:
+| Field (path) | Type | Required | Description | Example |
+|:---|:---|:---:|---|---|
+| `event` | `"contribution"` | Yes | Event type. Use `contribution` for reward-based fundraisers. | `"contribution"` |
+| `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
+| `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
+| `data.rewardName` | `string` | Yes | Reward title. | `"Ultra Deluxe Edition"` |
+| `data.userName` | `string` | No (optional) | Backer's display name. | `"Jane Doe"`     |
+| `data.tip` | `number` or `string` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `"5"` |
+
+`sub`-type event:
+| Field (path) | Type | Required | Description | Example |
+|:---|:---|:---:|---|---|
+| `event` | `"sub"` | Yes | Event type. Use `sub` for memberships. | `"sub"` |
+| `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
+| `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
+| `data.isRecurringDonation` | `boolean` | Yes | Whether is it a recurring donation or a straight subscription. | `true` |
+| `data.months` | `integer` | Yes | Subscription tenure in months, which is total months % 12 to account for full years (can be 0). | `1` |
+| `data.recurringDonationAmount` | `number` | No (optional) | Optional recurring donation amount, expressed in the provided `data.currency`. | `20` |
+| `data.subName` | `string` | Yes | Subscription title. | `"Tier 1"` |
+| `data.tip` | `number` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `20` |
+| `data.userName` | `string` | Yes | Subscriber's display name. | `"John Doe"` |
+| `data.years` | `integer` | Yes | Subscription tenure in years (can be 0). | `3` |
+
+Bear in mind that the payload needs to be send to:
+
 ```
-https://api.streamelements.com/kappa/v2/channels/[channel-id-top-replace]/socket
+https://api.streamelements.com/kappa/v2/channels/[account-id]/socket
 ```
-don't forget to add your bearer key from streamelements to the header too.
+
+… while properly replacing `[account-id]` and providing the StreamElements JWT Token.
+
+## Progress widget
+
+![Ulule Progress Widget](https://github.com/user-attachments/assets/75bacd91-9ffd-47fa-bb23-450148ea1523)
+
+### Steps:
+
+- Create a new Overlay in your StreamElements dashboard, and make it host a Custom Widget.
+- Copy and paste the provided code into the new widget:
+  - **HTML tab**
+  https://github.com/ulule/StreamElementsWidgets/blob/48aff9e056f1bd731216318a15db2a16562c29e9/src/progress/index.html#L1-L8
+  - **Fields tab**
+  https://github.com/ulule/StreamElementsWidgets/blob/48aff9e056f1bd731216318a15db2a16562c29e9/src/progress/fields.json#L1-L79
+- Save and reload
+- Open up your Ulule project backoffice and grab your numerical project ID from the URL
+- Go back to the StreamElements freshly created widget, set the project ID on the left sidebar
+- Set the other sidebar parameters to your liking and enjoy!
+
+### Advanced configuration:
+
+Feel free to implement custom CSS code within the StreamElements CSS tab to make the widget suit your liking. And if needed, you can also edit the fields to your liking through the dedicated tab!
