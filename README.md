@@ -46,7 +46,7 @@ There are two different and possible payload types, dependending on the `event` 
 
 `contribution`-type event:
 | Field (path) | Type | Required | Description | Example |
-|---|---:|:---:|---|---|
+|:---|:---|:---:|---|---|
 | `event` | `"contribution"` | Yes | Event type. Use `contribution` for reward-based fundraisers. | `"contribution"` |
 | `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
 | `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
@@ -56,15 +56,17 @@ There are two different and possible payload types, dependending on the `event` 
 
 `sub`-type event:
 | Field (path) | Type | Required | Description | Example |
-|---|---:|:---:|---|---|
+|:---|:---|:---:|---|---|
 | `event` | `"sub"` | Yes | Event type. Use `sub` for memberships. | `"sub"` |
 | `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
 | `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
+| `data.isRecurringDonation` | `boolean` | Yes | Whether is it a recurring donation or a straight subscription. | `true` |
 | `data.months` | `integer` | Yes | Subscription tenure in months, which is total months % 12 to account for full years (can be 0). | `1` |
-| `data.years` | `integer` | Yes | Subscription tenure in years (can be 0). | `3` |
+| `data.recurringDonationAmount` | `number` | No (optional) | Optional recurring donation amount, expressed in the provided `data.currency`. | `20` |
 | `data.subName` | `string` | Yes | Subscription title. | `"Tier 1"` |
+| `data.tip` | `number` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `20` |
 | `data.userName` | `string` | Yes | Subscriber's display name. | `"John Doe"` |
-| `data.tip` | `number` or `string` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `"20"` |
+| `data.years` | `integer` | Yes | Subscription tenure in years (can be 0). | `3` |
 
 Bear in mind that the payload needs to be send to:
 
