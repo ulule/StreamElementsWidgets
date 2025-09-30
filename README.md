@@ -11,7 +11,7 @@ The following will list basic installation instructions, assuming you're already
 ----
 ## Alert widget
 
-![Screen Recording 2025-07-03 at 11 45 02](https://github.com/user-attachments/assets/8a6cee26-a608-4857-b155-24c198c02437)
+![Ulule Alert Widget](https://github.com/user-attachments/assets/8a6cee26-a608-4857-b155-24c198c02437)
 
 ### Steps:
 
@@ -82,7 +82,7 @@ https://api.streamelements.com/kappa/v2/channels/[account-id]/socket
 
 ## Progress widget
 
-![Screen Recording 2025-07-07 at 15 47 30](https://github.com/user-attachments/assets/75bacd91-9ffd-47fa-bb23-450148ea1523)
+![Ulule Progress Widget](https://github.com/user-attachments/assets/75bacd91-9ffd-47fa-bb23-450148ea1523)
 
 ### Steps:
 
