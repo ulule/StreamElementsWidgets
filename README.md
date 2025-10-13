@@ -25,6 +25,16 @@ https://github.com/ulule/StreamElementsWidgets/blob/907dcc46029687579d715ed2f3ad
 
 Feel free to implement custom CSS code within the StreamElements CSS tab to make the widget suit your liking!
 
+Here are the default available classes and IDs to override:
+
+| Class/ID | Target |
+|:---|:---|
+| `.card` | Alert card container |
+| `.logo` | The Ulule logo preceding the alert text |
+| `#subname` | The `span` displaying the subscription title |
+| `#tip` | The `span` displaying the tip amount (when non-zero) |
+| `#username` | The `span` displaying the public user name (or Anonymous) |
+
 ### Advanced testing with a custom event:
 
 If you're already familiar with StreamElements Custom Widget development, you can send your own test events should you want to make sure the widget meets your needs.
