@@ -31,7 +31,7 @@ Here are the default available classes and IDs to override:
 |:---|:---|
 | `.card` | Alert card container |
 | `.logo` | The Ulule logo preceding the alert text |
-| `#subname` | The `span` displaying the subscription title |
+| `#subname` | The `span` displaying the contribution/subscription title |
 | `#tip` | The `span` displaying the tip amount (when non-zero) |
 | `#username` | The `span` displaying the public user name (or Anonymous) |
 
