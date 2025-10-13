@@ -35,6 +35,21 @@ Here are the default available classes and IDs to override:
 | `#tip` | The `span` displaying the tip amount (when non-zero) |
 | `#username` | The `span` displaying the public user name (or Anonymous) |
 
+⚠️ You WILL need to use `!important`, otherwise the external style will take precedence.
+
+For instance, to make the card opaque white instead of transluent black, add the following to the CSS tab on StreamElements:
+
+```css
+.card {
+  background-color: white !important;
+  border-radius: 4px !important;
+  color: #232221 !important;
+}
+```
+
+![ulule-white-progress-widget](https://github.com/user-attachments/assets/ad97c3b2-73b5-4034-8960-7c94243f816c)
+
+
 ### Advanced testing with a custom event:
 
 If you're already familiar with StreamElements Custom Widget development, you can send your own test events should you want to make sure the widget meets your needs.
