@@ -47,7 +47,7 @@ For instance, to make the card opaque white instead of transluent black, add the
 }
 ```
 
-![ulule-white-progress-widget](https://github.com/user-attachments/assets/ad97c3b2-73b5-4034-8960-7c94243f816c)
+![white-ulule-progress-alert](https://github.com/user-attachments/assets/1c5cea61-fb84-4475-9a3a-edfb117a2064)
 
 
 ### Advanced testing with a custom event:
