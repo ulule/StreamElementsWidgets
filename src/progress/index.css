@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css?family=Oxanium:400,500");
+@import url('https://fonts.googleapis.com/css?family=Oxanium:400,500');
 
 * {
-  color: {{fontColor}};
-  font-family: {{fontFamily}}, sans-serif;
-  font-size: {{fontSize}}px;
+  color: var(--font-color);
+  font-family: var(--font-family), sans-serif;
+  font-size: var(--font-size);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -14,13 +14,13 @@
 }
 
 .amount__goal {
-  font-size: calc({{fontSize}}px - {{fontSize}}px * 0.4);
+  font-size: calc(var(--font-size) - var(--font-size) * 0.4);
 }
 
 .progress-bar {
-  background-color: {{progressBackgroundColor}};
-  border: 1px solid {{progressBorderColor}};
-  border-radius: {{progressBorderRadius}}px;
+  background-color: var(--progress-background-color);
+  border: 1px solid var(--progress-border-color);
+  border-radius: var(--progress-border-radius);
   display: none;
   height: max-content;
   margin: 0 20px;
@@ -29,10 +29,10 @@
 }
 
 .progress-bar .progress-bar__content {
-  background-color: {{progressBarColor}};
-  color: {{progressBarFontColor}};
+  background-color: var(--progress-bar-color);
+  color: var(--progress-bar-font-color);
   display: block;
-  font-size: {{progressBarFontSize}}px;
+  font-size: var(--progress-bar-font-size);
   height: 100%;
   padding: 5px 0;
   text-align: end;
@@ -46,7 +46,7 @@
 }
 
 .stretch-goal {
-  font-size: calc({{progressBarFontSize}}px + {{progressBarFontSize}}px * 0.2);
+  font-size: calc(var(--progress-bar-font-size) + var(--progress-bar-font-size) * 0.2);
   margin: 8px 20px 0;
   text-align: right;
 }
