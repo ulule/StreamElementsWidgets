@@ -1,8 +1,35 @@
 const LOCALE = 'fr-FR'
 
+function setCssVariables(fieldData) {
+  const root = document.documentElement
+
+  const entries = [
+    ['--font-color', fieldData.fontColor],
+    ['--font-family', fieldData.fontFamily],
+    ['--font-size', `${fieldData.fontSize}px`],
+    ['--progress-background-color', fieldData.progressBackgroundColor],
+    ['--progress-border-color', fieldData.progressBorderColor],
+    ['--progress-border-radius', `${fieldData.progressBorderRadius}px`],
+    ['--progress-bar-color', fieldData.progressBarColor],
+    ['--progress-bar-font-color', fieldData.progressBarFontColor],
+    ['--progress-bar-font-size', `${fieldData.progressBarFontSize}px`],
+  ]
+
+  entries.forEach(([name, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      root.style.setProperty(name, String(value))
+    }
+  })
+}
+
 window.addEventListener('onWidgetLoad', async function (obj) {
   const status = await SE_API.getOverlayStatus()
-  const projectId = obj.fieldData.projectNumericalId
+
+  const fieldData = obj.detail.fieldData
+
+  setCssVariables(fieldData)
+
+  const projectId = fieldData.projectNumericalId
 
   if (!projectId) {
     console.error(`[ulule/stats] Expected a valid project ID, got ${projectId} instead`)
@@ -30,7 +57,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
 
   let amount
   const url = `https://data.ulule.com/projects/${projectId}/stats.json?cachebuster=${Date.now()}`
-  const refreshInterval = obj.fieldData.refreshInterval * 1000 || 10000
+  const refreshInterval = fieldData.refreshInterval * 1000 || 10000
 
   fetchStats()
   setInterval(async () => {
@@ -54,7 +81,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
         amount = committed
       }
       const isFinancial = amountRaised === String(committed)
-      const suffix = isFinancial ? obj.fieldData.currency : obj.fieldData.presaleSuffix
+      const suffix = isFinancial ? fieldData.currency : fieldData.presaleSuffix
 
       $({ amount: amount }).animate(
         { amount: committed },
@@ -75,8 +102,8 @@ window.addEventListener('onWidgetLoad', async function (obj) {
       if (goal > 0) {
         const progress = Math.floor((committed / goal) * 100)
         $('.progress-bar').show()
-        if (obj.fieldData.targetPercentage > 100) {
-          stretchGoalPercentage = (progress / obj.fieldData.targetPercentage) * 100
+        if (fieldData.targetPercentage > 100) {
+          stretchGoalPercentage = (progress / fieldData.targetPercentage) * 100
           console.log('stretchGoal', stretchGoalPercentage)
           $('.progress-bar__content').animate(
             {
@@ -86,7 +113,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
             1000,
           )
           if (stretchGoalPercentage < 100) {
-            $('.stretch-goal').text(`Prochain palier : ${obj.fieldData.targetPercentage}%`)
+            $('.stretch-goal').text(`Prochain palier : ${fieldData.targetPercentage}%`)
           }
           $('.progress-bar__content').text(`${progress}%`)
         } else {
