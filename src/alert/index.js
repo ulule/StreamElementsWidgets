@@ -31,11 +31,58 @@ window.addEventListener('onWidgetLoad', async (obj) => {
   socket.on('orders', (data) => {
     const cardElement = document.createElement('div')
 
-    const { currency, user, rewards } = data
+    const { currency, user, rewards, subscription } = data
     const userName = user.user_name ?? 'Une personne anonyme'
 
-    const tip = Number(data.tip)
     const tipLabel = tip && tip > 0 ? ` + un don de <span id="tip">${tip} ${currency}</span>` : ''
+    const tip = Number(data.tip)
+
+    // Membership with a tip
+    if (tip && subscription) {
+      const { project } = data
+      const { months, years } = subscription
+
+      const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
+      const subscriptionTitle = getI18n(subscription.reward.title)
+      const tipLabel = `<p>Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> ${projectLabel} !`
+      const yearsLabel = getYearsLabel(years)
+
+      // Running membership
+      if (subscriptionTitle) {
+        // Membership older than a year
+        if (years > 0 && months > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+             ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${yearsLabel} et ${months} mois</p>
+          </div>`
+        }
+        else if (years > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+             ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${yearsLabel}</p>
+          </div>`
+        }
+        // Membership of less than a year
+        else if (months > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${months} mois</p>
+          </div>`
+          // New membership
+        } else {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span></p>
+          </div>`
+        }
+
+        return showElement(cardElement)
+      }
+    }
 
     // Order with a tip only (no reward)
     if (rewards === null || rewards.length === 0) {
@@ -75,8 +122,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
     const rewardTitle = getI18n(reward.title)
 
     const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
-    const tipLabel = `<p>Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> ${projectLabel} !`
-
+    const yearsLabel = getYearsLabel(years)
 
     // Recurring donation to a membership-based project
     if (isRecurring && total > 0) {
@@ -86,43 +132,23 @@ window.addEventListener('onWidgetLoad', async (obj) => {
           <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> ${projectLabel} !</p>
         </div>`
     }
-    // Membership with a tip
-    else if (tip) {
-      // Running membership
-      if (rewardTitle) {
-        // Membership older than a year
-        if (years !== 0 && years !== 'null' && years !== '0' && years !== undefined) {
-          cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-             ${tipLabel} Abonné·e au niveau <span id="subname">"${rewardTitle}"</span> depuis ${years} an(s) et ${months} mois</p>
-          </div>`
-        // Membership of less than a year
-        } else if (months !== 0 && months !== 'null' && months !== '0' && months !== undefined) {
-          cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-            ${tipLabel} Abonné·e au niveau <span id="subname">"${rewardTitle}"</span> depuis ${months} mois</p>
-          </div>`
-        // New membership
-        } else {
-          cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-            ${tipLabel} Abonné·e au niveau <span id="subname">"${rewardTitle}"</span></p>
-          </div>`
-        }
-      }
-    } else {
+    else {
       // Running membership, no tip
-      if (years !== 0 && years !== 'null' && years !== '0' && years !== undefined) {
+      if (years > 0 && months > 0) {
         cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour les ${years} an(s) et ${months} mois d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
+            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} et ${months} mois d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
           </div>`
-      } else if (months !== 0 && months !== 'null' && months !== '0' && months !== undefined) {
-        cardElement.innerHTML = `
+      } else if (years > 0) {
+        cardElement.innerHTML = ` 
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
+          </div>`
+      }
+      else if (months > 0) {
+        cardElement.innerHTML = ` 
           <div class="card slideDown">
             <div class="logo"></div>
             <p>Merci <span id="username">${userName}</span> pour les ${months} mois d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
@@ -186,5 +212,33 @@ window.addEventListener('onWidgetLoad', async (obj) => {
     }
 
     return Object.values(resource)[0]
+  }
+
+
+  /**
+   * Returns a label for a given number of years.
+   *
+   * This function converts a numeric value representing years into a properly
+   * formatted string in French. It handles the singular and plural forms:
+   * - "1 an" for exactly 1 year
+   * - "{n} ans" for any other positive number of years
+   *
+   * @param {number} years - The number of years to convert.
+   * @returns {string|undefined} - The formatted French label for the years.
+   *                               Returns `undefined` if the input is 0 or negative.
+   *
+   * @example
+   * getYearsLabel(1); // Returns "1 an"
+   * getYearsLabel(3); // Returns "3 ans"
+   * getYearsLabel(0); // Returns undefined
+   */
+  function getYearsLabel(years) {
+    if (years === 1) {
+      return "1 an"
+    }
+
+    if (years > 0) {
+      return `${years} ans`
+    }
   }
 })
