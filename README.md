@@ -124,6 +124,7 @@ Now, here is a breakdown of the expected payload for membership-based projects *
 | `data.subscription.reward` | `object` | Yes | Object containing reward data. | `[{ "title": "…" }, { "title": "…"}]` |
 | `data.subscription.reward.price` | `number` \| `string` | No | Amount paid for the reward (none if free tier). | `"7"` |
 | `data.subscription.reward.title` | `object` | Yes | Reward title in available languages. Possible keys are: `en`, `es`, `fr`, `it`, `nl` | `{ "en": "Tier 1", "fr": "Niveau 1" }` |
+| `data.subscription.total` | `number` \| `string` | No | Total amount for the subscription. If `is_recurring: true`, then this is the donation amount. | `"21"` |
 | `data.subscription.years` | `number` | Yes | Subscription tenure in years (can be 0). | `1` |
 | `data.user` | `object` | No | Object containing user data. | `{ user_name: "…" }`     |
 | `data.user.user_name` | `string` | No | Subscriber's display name. If none, shows as anonymous. | `"John Doe"`     |

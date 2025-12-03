@@ -28,40 +28,84 @@ window.addEventListener('onWidgetLoad', async (obj) => {
     return logo.outerHTML
   }
 
-  socket.on('orders', (data) => {
+  socket.on('order', (data) => {
     const cardElement = document.createElement('div')
 
     const { currency, user, rewards, subscription } = data
-    const userName = user.user_name ?? 'Une personne anonyme'
 
-    const tipLabel = tip && tip > 0 ? ` + un don de <span id="tip">${tip} ${currency}</span>` : ''
     const tip = Number(data.tip)
+    const tipLabel = tip && tip > 0 ? ` + un don de <span id="tip">${tip} ${currency}</span>` : ''
+    const userName = user.user_name ?? 'une personne anonyme'
 
-    // Membership with a tip
-    if (tip && subscription) {
-      const { project } = data
-      const { months, years } = subscription
+    // Membership-based project
+    if (subscription) {
+      const { is_recurring: isRecurring, project } = data
+      const { months, total, years } = subscription
 
       const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
       const subscriptionTitle = getI18n(subscription.reward.title)
       const tipLabel = `<p>Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> ${projectLabel} !`
       const yearsLabel = getYearsLabel(years)
 
-      // Running membership
-      if (subscriptionTitle) {
+      // Recurring donation to a membership-based project
+      if (isRecurring && total > 0) {
+        cardElement.innerHTML = `
+        <div class="card slideDown">
+          <div class="logo"></div>
+          <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> ${projectLabel} !</p>
+        </div>`
+      }
+      else {
+        // Running membership, no tip
+        if (years > 0 && months > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} et ${months} mois d'abonnement au niveau <span id="reward">"${subscriptionTitle}"</span> !</p>
+          </div>`
+        } else if (years > 0) {
+          cardElement.innerHTML = ` 
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} d'abonnement au niveau <span id="reward">"${subscriptionTitle}"</span> !</p>
+          </div>`
+        }
+        else if (months > 0) {
+          cardElement.innerHTML = ` 
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour les ${months} mois d'abonnement au niveau <span id="reward">"${subscriptionTitle}"</span> !</p>
+          </div>`
+        } else if (subscription.reward) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le nouvel abonnement ${projectLabel} au niveau <span id="reward">"${subscriptionTitle}"</span> !</p>
+          </div>`
+        } else if (ENABLE_FREE_TIER) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le nouvel abonnement gratuit !</p>
+          </div>`
+        }
+      }
+
+      // Tip on top of a running membership
+      if (tip && subscriptionTitle) {
         // Membership older than a year
         if (years > 0 && months > 0) {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-             ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${yearsLabel} et ${months} mois</p>
+             ${tipLabel} Abonné·e au niveau <span id="reward">"${subscriptionTitle}"</span> depuis ${yearsLabel} et ${months} mois</p>
           </div>`
         }
         else if (years > 0) {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-             ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${yearsLabel}</p>
+             ${tipLabel} Abonné·e au niveau <span id="reward">"${subscriptionTitle}"</span> depuis ${yearsLabel}</p>
           </div>`
         }
         // Membership of less than a year
@@ -69,19 +113,20 @@ window.addEventListener('onWidgetLoad', async (obj) => {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span> depuis ${months} mois</p>
+            ${tipLabel} Abonné·e au niveau <span id="reward">"${subscriptionTitle}"</span> depuis ${months} mois</p>
           </div>`
           // New membership
         } else {
           cardElement.innerHTML = `
           <div class="card slideDown">
             <div class="logo"></div>
-            ${tipLabel} Abonné·e au niveau <span id="subname">"${subscriptionTitle}"</span></p>
+            ${tipLabel} Abonné·e au niveau <span id="reward">"${subscriptionTitle}"</span></p>
           </div>`
         }
 
-        return showElement(cardElement)
       }
+
+      return showElement(cardElement)
     }
 
     // Order with a tip only (no reward)
@@ -89,7 +134,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p>Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> !</p>
+          <p>Merci <span id="username">${capitalize(userName)}</span> pour le don de <span id="tip">${tip} ${currency}</span> !</p>
         </div>`
     } else if (rewards.length === 1) {
       // Order with a single reward
@@ -97,75 +142,18 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p><span id="username">${userName}</span> vient de choisir la contrepartie <span id="subname">« ${getI18n(reward.title)} »</span> ${tipLabel} !</p>
+          <p><span id="username">${capitalize(userName)}</span> vient de choisir la contrepartie <span id="reward">« ${getI18n(reward.title)} »</span> ${tipLabel} !</p>
         </div>`
     } else {
       // Order with multiple rewards
       const titles = rewards.map((reward) => {
-        return `<span id="subname">« ${getI18n(reward.title)} »</span>`
+        return `<span id="reward">« ${getI18n(reward.title)} »</span>`
       })
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
-          <p><span id="username">${userName}</span> vient de choisir les contreparties ${titles.join(', ')} ${tipLabel} !</p>
+          <p><span id="username">${capitalize(userName)}</span> vient de choisir les contreparties ${titles.join(', ')} ${tipLabel} !</p>
         </div>`
-    }
-
-    showElement(cardElement)
-  })
-
-  socket.on('subscriptions', (data) => {
-    const cardElement = document.createElement('div')
-
-    const { currency, is_recurring: isRecurring, months, project, reward, total, tip, user, years } = data
-    const userName = user.user_name ?? 'Une personne anonyme'
-    const rewardTitle = getI18n(reward.title)
-
-    const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
-    const yearsLabel = getYearsLabel(years)
-
-    // Recurring donation to a membership-based project
-    if (isRecurring && total > 0) {
-      cardElement.innerHTML = `
-        <div class="card slideDown">
-          <div class="logo"></div>
-          <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> ${projectLabel} !</p>
-        </div>`
-    }
-    else {
-      // Running membership, no tip
-      if (years > 0 && months > 0) {
-        cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} et ${months} mois d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
-          </div>`
-      } else if (years > 0) {
-        cardElement.innerHTML = ` 
-          <div class="card slideDown">
-            <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour les ${yearsLabel} d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
-          </div>`
-      }
-      else if (months > 0) {
-        cardElement.innerHTML = ` 
-          <div class="card slideDown">
-            <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour les ${months} mois d'abonnement au niveau <span id="subname">"${rewardTitle}"</span> !</p>
-          </div>`
-      } else if (reward) {
-        cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour le nouvel abonnement ${projectLabel} au niveau <span id="subname">"${rewardTitle}"</span> !</p>
-          </div>`
-      } else if (ENABLE_FREE_TIER) {
-        cardElement.innerHTML = `
-          <div class="card slideDown">
-            <div class="logo"></div>
-            <p>Merci <span id="username">${userName}</span> pour le nouvel abonnement gratuit !</p>
-          </div>`
-      }
     }
 
     showElement(cardElement)
@@ -187,6 +175,22 @@ window.addEventListener('onWidgetLoad', async (obj) => {
   }
 
   // IN-HOUSE HELPERS
+
+  /**
+   * Capitalizes the first character of a given string.
+   *
+   * This function takes any input, converts it to a string, and returns a new
+   * string where the first character is transformed to uppercase. If the input is
+   * falsy (e.g., null, undefined, empty string, 0, false), it returns an empty
+   * string.
+   *
+   * @param {*} s - The value to capitalize. It will be converted to a string.
+   * @returns {string} - The string with its first character capitalized, or an empty
+   *                     string if the input is falsy.
+   */
+  function capitalize(s) {
+    return (s && String(s[0]).toUpperCase() + String(s).slice(1)) || ""
+  }
 
   /**
    * Retrieves the best-matched localized string from an i18n resource object.
