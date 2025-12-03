@@ -39,8 +39,8 @@ window.addEventListener('onWidgetLoad', async (obj) => {
 
     // Membership-based project
     if (subscription) {
-      const { is_recurring: isRecurring, project } = data
-      const { months, total, years } = subscription
+      const { project } = data
+      const { is_recurring: isRecurring, months, total, years } = subscription
 
       const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
       const subscriptionTitle = getI18n(subscription.reward.title)
