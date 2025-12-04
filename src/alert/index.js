@@ -43,17 +43,37 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       const { is_recurring: isRecurring, months, total, years } = subscription
 
       const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
-      const subscriptionTitle = getI18n(subscription.reward.title)
+      const subscriptionTitle = subscription.reward.title && getI18n(subscription.reward.title)
       const tipLabel = `<p>Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> ${projectLabel} !`
       const yearsLabel = getYearsLabel(years)
 
       // Recurring donation to a membership-based project
-      if (isRecurring && total > 0) {
-        cardElement.innerHTML = `
-        <div class="card slideDown">
-          <div class="logo"></div>
-          <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> ${projectLabel} !</p>
-        </div>`
+      if ((isRecurring && total > 0) || (!isRecurring && total > 0 && !subscription.reward.title)) {
+        if (years > 0 && months > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> depuis ${yearsLabel} et ${months} mois ${projectLabel} !</p>
+          </div>`
+        } else if (years > 0) {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> depuis ${yearsLabel} ${projectLabel} !</p>
+          </div>`
+        } else if (months > 0) {
+         cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> depuis ${months} mois ${projectLabel} !</p>
+          </div>`
+        } else {
+          cardElement.innerHTML = `
+          <div class="card slideDown">
+            <div class="logo"></div>
+            <p>Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span> ${projectLabel} !</p>
+          </div>`
+        }
       }
       else {
         // Running membership, no tip
@@ -130,7 +150,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
     }
 
     // Order with a tip only (no reward)
-    if (rewards === null || rewards.length === 0) {
+    if (!rewards || rewards.length === 0) {
       cardElement.innerHTML = `
         <div class="card slideDown">
           <div class="logo"></div>
