@@ -6,7 +6,7 @@ The following will list basic installation instructions, assuming you're already
 
 ----
 
-📖 ℹ️ If you need a detailed how-to, a preview or a list of supported events and interactions, please refer to **[the public documentation](https://ulule.notion.site/ulule-stream-widgets)** (only in French 🇫🇷 for now, sorry).
+📖 ℹ️ If you need a detailed how-to or a list of supported events and interactions, please refer to **[the public documentation](https://ulule.notion.site/ulule-stream-widgets)** (only in French 🇫🇷 for now, sorry).
 
 ----
 ## Alert widget
@@ -31,13 +31,14 @@ Here are the default available classes and IDs to override:
 |:---|:---|
 | `.card` | Alert card container |
 | `.logo` | The Ulule logo preceding the alert text |
-| `#subname` | The `span` displaying the contribution/subscription title |
+| `#project` | The `span` displaying the project title |
+| `#reward` | The `span` displaying the reward title |
 | `#tip` | The `span` displaying the tip amount (when non-zero) |
 | `#username` | The `span` displaying the public user name (or Anonymous) |
 
 ⚠️ You WILL need to use `!important`, otherwise the external style will take precedence.
 
-For instance, to make the card opaque white instead of transluent black, add the following to the CSS tab on StreamElements:
+For instance, to make the card opaque white instead of the default transluent black, add the following to the CSS tab on StreamElements:
 
 ```css
 .card {
@@ -54,50 +55,82 @@ For instance, to make the card opaque white instead of transluent black, add the
 
 If you're already familiar with StreamElements Custom Widget development, you can send your own test events should you want to make sure the widget meets your needs.
 
-This is an exemple of the `POST` payload expected by the widget:
+This is an example of the `POST` payload expected by the widget:
 ```jsonc
 {
-    "event": "sub",
-    "data": {
-        "currency": "€",
-        "months": 1,
-        "tip": "20", // Optional
-        "subName": "Tier 1",
-        "userName": "Jane Doe",
-        "years": 3,
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "15",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Un chouette projet"
+      }
+    },
+    "rewards": [
+      {
+        "price": "10",
+        "title": {
+          "fr": "Contrepartie #1"
+        }
+      }
+    ],
+    "tip": "5",
+    "user": {
+      "user_name": "Jane Doe"
     }
+  }
 }
 ```
 
-There are two different and possible payload types, dependending on the `event` value provided: `contribution` or `sub`.
+There are two different and possible payload types, depending on whether the project is a membership based one (i.e. a subscription-based page) or not.
 
 **Details**
 
-`contribution`-type event:
+Here is a breakdown of the expected payload for **NON** membership-based projects:
+
 | Field (path) | Type | Required | Description | Example |
 |:---|:---|:---:|---|---|
-| `event` | `"contribution"` | Yes | Event type. Use `contribution` for reward-based fundraisers. | `"contribution"` |
-| `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
+| `event` | `string` | Yes | Event type. For now, only `order` is suppported. | `"order"` |
+| `data` | `object` | Yes | Object containing order-specific details. | `{ … }` |
 | `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
-| `data.rewardName` | `string` | Yes | Reward title. | `"Ultra Deluxe Edition"` |
-| `data.userName` | `string` | No (optional) | Backer's display name. If none, show as anonymous. | `"Jane Doe"`     |
-| `data.tip` | `number` or `string` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `"5"` |
+| `data.order_total` | `number` \| `string` | Yes | Total amount for the order. | `"33"` |
+| `data.project` | `object` | Yes | Object containing project data. | `{ lang: "…", "title": { … } }` |
+| `data.project.lang` | `string` | Yes | Default language for the project. Possible values are: `en`, `es`, `fr`, `it`, `nl` | `"fr"` |
+| `data.project.title` | `object` | Yes | Project title in available languages. Possible keys are: `en`, `es`, `fr`, `it`, `nl` | `{ "en": "Project Title", "fr": "Titre du projet" }` |
+| `data.rewards` | `array` | No | Array of rewards. | `[{ "title": "…" }, { "title": "…"}]` |
+| `data.rewards[n].price` | `number` \| `string` | Yes | Amount paid for the reward. | `49.3` |
+| `data.rewards[n].title` | `object` | Yes | Reward title in available languages. Possible keys are: `en`, `es`, `fr`, `it`, `nl` | `{ "en": "Deluxe Edition", "fr": "Édition Deluxe" }` |
+| `data.user` | `object` | No | Object containing user data. | `{ user_name: "…" }`     |
+| `data.user.user_name` | `string` | No | Backer's display name. If none, shows as anonymous. | `"Jane Doe"`     |
+| `data.tip` | `number` \| `string` | No | Optional tip amount added to the order, expressed in the provided `data.currency`. | `"16"` |
 
-`sub`-type event:
+
+Now, here is a breakdown of the expected payload for membership-based projects **ONLY**:
+
 | Field (path) | Type | Required | Description | Example |
 |:---|:---|:---:|---|---|
-| `event` | `"sub"` | Yes | Event type. Use `sub` for memberships. | `"sub"` |
-| `data` | `object` | Yes | Object containing order-specific details. | `{ ... }` |
+| `event` | `string` | Yes | Event type. For now, only `order` is suppported. | `"order"` |
+| `data` | `object` | Yes | Object containing order-specific details. | `{ … }` |
 | `data.currency` | `string` | Yes | Currency symbol (e.g., €, $…). | `"€"` |
-| `data.isRecurringDonation` | `boolean` | Yes | Whether is it a recurring donation or a straight subscription. | `true` |
-| `data.months` | `integer` | Yes | Subscription tenure in months, which is total months % 12 to account for full years (can be 0). | `1` |
-| `data.recurringDonationAmount` | `number` | No (optional) | Optional recurring donation amount, expressed in the provided `data.currency`. | `20` |
-| `data.subName` | `string` | Yes | Subscription title. | `"Tier 1"` |
-| `data.tip` | `number` | No (optional) | Optional tip amount added to the order, expressed in the provided `data.currency`. | `20` |
-| `data.userName` | `string` | Yes | Subscriber's display name. | `"John Doe"` |
-| `data.years` | `integer` | Yes | Subscription tenure in years (can be 0). | `3` |
+| `data.is_recurring` | `boolean` | Yes | Whether this subscription is a rewardless recurring donation (when `true`) or a standard reward-based sub (when `false`). | `false` |
+| `data.order_total` | `number` \| `string` | Yes | Total amount for the order. | `"44"` |
+| `data.project` | `object` | Yes | Object containing project data. | `{ lang: "…", "title": { … } }` |
+| `data.project.lang` | `string` | Yes | Default language for the project. Possible values are: `en`, `es`, `fr`, `it`, `nl` | `"fr"` |
+| `data.project.title` | `object` | Yes | Project title in available languages. Possible keys are: `en`, `es`, `fr`, `it`, `nl` | `{ "en": "Project Title", "fr": "Titre du projet" }` |
+| `data.subscription` | `object` | Yes | Object containing subscription data. | `"{ "reward": { … } }"` |
+| `data.subscription.months` | `number` | Yes | Subscription tenure in months, which is total months % 12 to account for full years (can be 0). | `7` |
+| `data.subscription.reward` | `object` | Yes | Object containing reward data. | `[{ "title": "…" }, { "title": "…"}]` |
+| `data.subscription.reward.price` | `number` \| `string` | No | Amount paid for the reward (none if free tier). | `"7"` |
+| `data.subscription.reward.title` | `object` | Yes | Reward title in available languages. Possible keys are: `en`, `es`, `fr`, `it`, `nl` | `{ "en": "Tier 1", "fr": "Niveau 1" }` |
+| `data.subscription.total` | `number` \| `string` | No | Total amount for the subscription. If `is_recurring: true`, then this is the donation amount. | `"21"` |
+| `data.subscription.years` | `number` | Yes | Subscription tenure in years (can be 0). | `1` |
+| `data.user` | `object` | No | Object containing user data. | `{ user_name: "…" }`     |
+| `data.user.user_name` | `string` | No | Subscriber's display name. If none, shows as anonymous. | `"John Doe"`     |
+| `data.tip` | `number` \| `string` | No | Optional one-time (i.e. NOT recurring) tip amount added to the order, expressed in the provided `data.currency`. | `"16"` |
 
-Bear in mind that the payload needs to be send to:
+Bear in mind that the payload needs to be sent to:
 
 ```
 https://api.streamelements.com/kappa/v2/channels/[account-id]/socket
