@@ -1,0 +1,31 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "17",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Une communauté chouette",
+        "en": "A nice community"
+      }
+    },
+    "subscription": {
+      "is_recurring": false,
+      "months": 3,
+      "reward": {
+        "price": "12",
+        "title": {
+          "fr": "Niveau soutien",
+          "en": "Support tier"
+        }
+      },
+      "total": "12",
+      "years": 1
+    },
+    "tip": "5",
+    "user": {
+      "user_name": "Samira Petit"
+    }
+  }
+}

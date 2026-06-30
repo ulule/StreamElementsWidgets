@@ -1,0 +1,31 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "12",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Une communauté chouette",
+        "en": "A nice community"
+      }
+    },
+    "subscription": {
+      "is_recurring": false,
+      "months": 0,
+      "reward": {
+        "price": "12",
+        "title": {
+          "fr": "Niveau soutien",
+          "en": "Support tier"
+        }
+      },
+      "total": "12",
+      "years": 0
+    },
+    "tip": "0",
+    "user": {
+      "user_name": "Camille Durand"
+    }
+  }
+}

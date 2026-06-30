@@ -1,0 +1,16 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "18",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Un chouette projet",
+        "en": "A nice project"
+      }
+    },
+    "rewards": [],
+    "tip": "18"
+  }
+}

@@ -1,52 +1,132 @@
-@import url('https://fonts.googleapis.com/css?family=Oxanium:400,500');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ulule-progress-block-background-color-rgb: 255 255 255;
+  --ulule-progress-block-border-radius: 8px;
+  --ulule-progress-block-opacity: 0.95;
+  --ulule-progress-font-color: #007199;
+  --ulule-progress-font-family: 'Roboto';
+  --ulule-progress-font-size: 28px;
+  --ulule-progress-font-weight: 700;
+  --ulule-progress-goal-font-color: #232221;
+  --ulule-progress-background-color: #f6f1eb;
+  --ulule-progress-bar-color: #007199;
+  --ulule-progress-bar-font-color: #ffffff;
+  --ulule-progress-bar-font-size: 14px;
+  --ulule-progress-border-color: #f6f1eb;
+  --ulule-progress-border-radius: 4px;
+}
 
 * {
-  color: var(--font-color);
-  font-family: var(--font-family), sans-serif;
-  font-size: var(--font-size);
-  overflow: hidden;
+  box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.progress-card {
+  background-color: rgb(var(--ulule-progress-block-background-color-rgb) / var(--ulule-progress-block-opacity));
+  border-radius: var(--ulule-progress-block-border-radius);
+  box-shadow: 1px 2px 10px 0 rgba(89, 84, 78, 0.12);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 320px;
+  padding: 20px 24px 16px;
+  width: 374px;
+}
+
+.progress-card__header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-height: 40px;
+}
+
+.logo {
+  background-image: url('data:image/png;base64,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');
+  background-position: center;
+  background-size: cover;
+  flex: 0 0 40px;
+  height: 40px;
+  width: 40px;
+}
+
 .amount {
-  margin: 20px 20px 8px;
+  color: var(--ulule-progress-font-color);
+  flex: 1 1 auto;
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: var(--ulule-progress-font-size);
+  font-weight: var(--ulule-progress-font-weight);
+  line-height: 1.05;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .amount__goal {
-  font-size: calc(var(--font-size) - var(--font-size) * 0.4);
+  color: var(--ulule-progress-goal-font-color);
+  font-size: calc(var(--ulule-progress-font-size) * 0.58);
+  font-weight: 600;
 }
 
 .progress-bar {
-  background-color: var(--progress-background-color);
-  border: 1px solid var(--progress-border-color);
-  border-radius: var(--progress-border-radius);
+  background-color: var(--ulule-progress-background-color);
+  border: 1px solid var(--ulule-progress-border-color);
+  border-radius: var(--ulule-progress-border-radius);
   display: none;
-  height: max-content;
-  margin: 0 20px;
+  height: 24px;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
-.progress-bar .progress-bar__content {
-  background-color: var(--progress-bar-color);
-  color: var(--progress-bar-font-color);
-  display: block;
-  font-size: var(--progress-bar-font-size);
+.progress-bar__content {
+  align-items: center;
+  background-color: var(--ulule-progress-bar-color);
+  color: var(--ulule-progress-bar-font-color);
+  display: flex;
+  font-size: var(--ulule-progress-bar-font-size);
+  font-weight: 700;
   height: 100%;
-  padding: 5px 0;
-  text-align: end;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: visible;
+  padding: 0 8px;
+  position: relative;
+  white-space: nowrap;
   width: 0;
 }
 
-.progress-bar .progress-bar__content::after {
-  content: '';
-  display: inline;
-  padding: 4px;
+.progress-bar__label {
+  color: var(--ulule-progress-bar-font-color);
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: var(--ulule-progress-bar-font-size);
+  line-height: 1;
+}
+
+.progress-bar__content--label-outside {
+  padding: 0;
+}
+
+.progress-bar__content--label-outside .progress-bar__label {
+  color: var(--ulule-progress-bar-color);
+  left: calc(100% + 6px);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .stretch-goal {
-  font-size: calc(var(--progress-bar-font-size) + var(--progress-bar-font-size) * 0.2);
-  margin: 8px 20px 0;
+  color: var(--ulule-progress-font-color);
+  display: none;
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: -4px;
   text-align: right;
 }

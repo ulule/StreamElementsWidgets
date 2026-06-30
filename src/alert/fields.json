@@ -1,0 +1,102 @@
+{
+  "notificationSoundEnabled": {
+    "label": "Son de notification",
+    "type": "checkbox",
+    "value": false,
+    "group": "Notification"
+  },
+  "notificationSound": {
+    "label": "Son personnalisé",
+    "type": "sound-input",
+    "group": "Notification"
+  },
+  "enableFreeTierAlert": {
+    "label": "Alerte lors d'un abonnement gratuit",
+    "type": "checkbox",
+    "value": false,
+    "group": "Types d'alerte"
+  },
+  "highlightColor": {
+    "label": "Couleur du texte (nom et contrepartie)",
+    "type": "colorpicker",
+    "value": "#007199",
+    "group": "Texte mis en avant"
+  },
+  "highlightFontSize": {
+    "label": "Taille du texte (nom et contrepartie)",
+    "type": "number",
+    "value": 16,
+    "min": 8,
+    "step": 1,
+    "group": "Texte mis en avant"
+  },
+  "highlightFontWeight": {
+    "label": "Graisse du texte (nom et contrepartie)",
+    "type": "dropdown",
+    "value": "700",
+    "options": {
+      "400": "Regular",
+      "500": "Medium",
+      "600": "Semi Bold",
+      "700": "Bold",
+      "800": "Extra Bold"
+    },
+    "group": "Texte mis en avant"
+  },
+  "textColor": {
+    "label": "Couleur du texte",
+    "type": "colorpicker",
+    "value": "#232221",
+    "group": "Texte"
+  },
+  "fontSize": {
+    "label": "Taille du texte",
+    "type": "number",
+    "value": 16,
+    "min": 8,
+    "step": 1,
+    "group": "Texte"
+  },
+  "fontWeight": {
+    "label": "Graisse du texte",
+    "type": "dropdown",
+    "value": "400",
+    "options": {
+      "400": "Regular",
+      "500": "Medium",
+      "600": "Semi Bold",
+      "700": "Bold",
+      "800": "Extra Bold"
+    },
+    "group": "Texte"
+  },
+  "fontFamily": {
+    "label": "Police",
+    "type": "googleFont",
+    "value": "Roboto",
+    "group": "Texte"
+  },
+  "blockColor": {
+    "label": "Couleur du bloc",
+    "type": "colorpicker",
+    "value": "#FFFFFF",
+    "group": "Bloc"
+  },
+  "blockOpacity": {
+    "label": "Opacité du bloc",
+    "type": "slider",
+    "value": 95,
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "group": "Bloc"
+  },
+  "blockBorderRadius": {
+    "label": "Courbure du bloc",
+    "type": "number",
+    "value": 8,
+    "min": 0,
+    "step": 1,
+    "group": "Bloc"
+  }
+}

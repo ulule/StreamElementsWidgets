@@ -1,0 +1,27 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "35",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Un chouette projet",
+        "en": "A nice project"
+      }
+    },
+    "rewards": [
+      {
+        "price": "30",
+        "title": {
+          "fr": "Le pack découverte",
+          "en": "Discovery pack"
+        }
+      }
+    ],
+    "tip": "5",
+    "user": {
+      "user_name": "Jane Doe"
+    }
+  }
+}
