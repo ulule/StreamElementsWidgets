@@ -1,0 +1,34 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "72",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Un chouette projet",
+        "en": "A nice project"
+      }
+    },
+    "rewards": [
+      {
+        "price": "30",
+        "title": {
+          "fr": "Le pack découverte",
+          "en": "Discovery pack"
+        }
+      },
+      {
+        "price": "42",
+        "title": {
+          "fr": "L'édition collector",
+          "en": "Collector edition"
+        }
+      }
+    ],
+    "tip": "0",
+    "user": {
+      "user_name": "Alex Martin"
+    }
+  }
+}

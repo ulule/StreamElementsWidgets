@@ -1,0 +1,25 @@
+{
+  "event": "order",
+  "data": {
+    "currency": "€",
+    "order_total": "8",
+    "project": {
+      "lang": "fr",
+      "title": {
+        "fr": "Une communauté chouette",
+        "en": "A nice community"
+      }
+    },
+    "subscription": {
+      "is_recurring": true,
+      "months": 6,
+      "reward": null,
+      "total": "8",
+      "years": 0
+    },
+    "tip": "0",
+    "user": {
+      "user_name": "Louis Morel"
+    }
+  }
+}

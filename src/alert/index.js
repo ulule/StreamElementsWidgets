@@ -1,141 +1,147 @@
-CURRENT_LOCALE = 'fr'
-ENABLE_PROJECT_NAME = true
-ENABLE_FREE_TIER = false
+const DEFAULT_LOCALE = 'fr'
+const DEFAULT_SOUND_URL = 'https://cdn.jsdelivr.net/gh/ulule/StreamElementsWidgets/src/alert/positive-game-sound-4.ogg'
 
-window.addEventListener('onWidgetLoad', async (obj) => {
-  const apiToken = obj.detail.channel.apiToken
+window.addEventListener('onWidgetLoad', (obj) => {
+  const settings = normalizeSettings(obj.detail.fieldData || {})
 
-  const socket = io('https://realtime.streamelements.com', {
-    transports: ['websocket'],
-  })
-  socket.on('authenticated', onAuthenticated)
-  socket.on('connect', onConnect)
-  socket.on('disconnect', onDisconnect)
-  socket.on('order', handleOrder)
-  socket.on('unauthorized', console.error)
+  loadGoogleFont(settings.fontFamily)
+  setCssVariables(settings)
 
-  // SOCKET HANDLERS
+  window.addEventListener('onEventReceived', handleEventReceived)
 
-  function onAuthenticated(data) {
-    console.log(`[ulule-widget] Successfully connected to channel ${data.channelId}`)
-  }
+  function handleEventReceived(obj = {}) {
+    const detail = obj.detail || {}
 
-  function onConnect() {
-    console.log('[ulule-widget] Successfully connected to the websocket')
-    socket.emit('authenticate', { method: 'apikey', token: apiToken })
-  }
-
-  function onDisconnect() {
-    console.log('[ulule-widget] Lost connection to the websocket')
-    console.log('[ulule-widget] Reconnecting…')
-    onConnect()
-  }
-
-  // ORDER HANDLERS
-
-  function handleOrder(data) {
-    const { subscription, user } = data
-    const tip = Number(data.tip)
-    const userName = user.user_name ?? 'une personne anonyme'
-
-    if (subscription) {
-      return handleSubscriptionOrder(data, tip, userName)
+    if (detail.listener !== 'order') {
+      return
     }
 
-    return handleRegularOrder(data, tip, userName)
+    handleOrder(detail.event)
   }
 
-  function handleRegularOrder(data, tip, userName) {
+  function handleOrder(data = {}) {
+    const tip = numberOrZero(data.tip)
+    const userName = capitalize(data.user?.user_name || 'une personne anonyme')
+    const locale = data.project?.lang || DEFAULT_LOCALE
+
+    if (data.subscription) {
+      return handleSubscriptionOrder(data, tip, userName, locale)
+    }
+
+    return handleRegularOrder(data, tip, userName, locale)
+  }
+
+  function handleRegularOrder(data, tip, userName, locale) {
     const { currency, rewards } = data
-    const tipLabel = tip && tip > 0 ? ` + un don de <span id="tip">${tip} ${currency}</span>` : ''
+    const safeUserName = highlight(userName, 'username')
+    const currencyLabel = currency || ''
+    const tipLabel = tip > 0 ? ` + un don de ${highlight(`${formatAmount(tip)} ${currencyLabel}`, 'tip')}` : ''
     let message = null
 
-    // Tip only (no reward)
     if (!rewards || rewards.length === 0) {
-      message = `Merci <span id="username">${capitalize(userName)}</span> pour le don de <span id="tip">${tip} ${currency}</span> !`
-    }
-    // Single reward
-    else if (rewards.length === 1) {
+      const donationAmount = tip > 0 ? tip : numberOrZero(data.order_total)
+
+      if (donationAmount > 0) {
+        message = `Merci ${safeUserName} pour le don de ${highlight(`${formatAmount(donationAmount)} ${currencyLabel}`, 'tip')} !`
+      }
+    } else if (rewards.length === 1) {
       const reward = rewards[0]
-      message = `<span id="username">${capitalize(userName)}</span> vient de choisir la contrepartie <span id="reward">« ${getI18n(reward.title)} »</span> ${tipLabel} !`
-    }
-    // Multiple rewards
-    else {
-      const titles = rewards.map((reward) => `<span id="reward">« ${getI18n(reward.title)} »</span>`)
-      message = `<span id="username">${capitalize(userName)}</span> vient de choisir les contreparties ${titles.join(', ')} ${tipLabel} !`
+      message = `${safeUserName} vient de choisir la contrepartie ${highlight(
+        `« ${getI18n(reward.title, locale)} »`,
+        'reward',
+      )}${tipLabel} !`
+    } else {
+      const titles = rewards.map((reward) => highlight(`« ${getI18n(reward.title, locale)} »`, 'reward'))
+      message = `${safeUserName} vient de choisir les contreparties ${titles.join(' + ')}${tipLabel} !`
     }
 
-    showCard(message)
+    if (message) {
+      showCard(message)
+    } else {
+      console.warn('[ulule-widget] No regular order message could be formed', data)
+    }
   }
 
-  function handleSubscriptionOrder(data, tip, userName) {
+  function handleSubscriptionOrder(data, tip, userName, locale) {
     const { currency, project, subscription } = data
-    const { is_recurring: isRecurring, months, total, years } = subscription
-    const subscriptionTitle = subscription.reward.title && getI18n(subscription.reward.title)
-
-    const projectLabel = ENABLE_PROJECT_NAME ? `à <span id="project">${getI18n(project.title)}</span>` : ''
+    const isRecurring = data.is_recurring ?? subscription.is_recurring
+    const months = numberOrZero(subscription.months)
+    const reward = subscription.reward || {}
+    const rewardPrice = numberOrZero(reward.price)
+    const total = numberOrZero(subscription.total)
+    const years = numberOrZero(subscription.years)
+    const subscriptionTitle = reward.title ? getI18n(reward.title, locale) : null
+    const projectTitle = project?.title ? getI18n(project.title, locale) : null
+    const projectLabel = projectTitle ? `à ${highlight(projectTitle, 'project')}` : ''
     const durationLabel = getDurationLabel(years, months)
+    const hasPaidMembership = subscriptionTitle && (rewardPrice > 0 || total > 0)
 
     let message = null
 
-    // Recurring donation to membership-based project
-    if ((isRecurring && total > 0) || (!isRecurring && total > 0 && !subscription.reward.title)) {
+    if ((isRecurring && total > 0) || (!isRecurring && total > 0 && !subscriptionTitle)) {
       message = buildRecurringDonationMessage(userName, total, currency, durationLabel, projectLabel)
-    }
-    // Running membership with reward (no tip)
-    else if (subscriptionTitle) {
+    } else if (hasPaidMembership) {
       message = buildMembershipMessage(userName, subscriptionTitle, durationLabel, years, months, projectLabel)
-    }
-    // Free tier membership
-    else if (ENABLE_FREE_TIER) {
-      message = `Merci <span id="username">${userName}</span> pour le nouvel abonnement gratuit !`
+    } else if (subscriptionTitle && settings.enableFreeTierAlert) {
+      message = `Merci ${highlight(userName, 'username')} pour le nouvel abonnement gratuit au niveau ${highlight(
+        `« ${subscriptionTitle} »`,
+        'reward',
+      )} !`
+    } else if (settings.enableFreeTierAlert) {
+      message = `Merci ${highlight(userName, 'username')} pour le nouvel abonnement gratuit !`
     }
 
-    // Tip on top of existing membership
-    if (tip && subscriptionTitle) {
+    if (tip > 0 && subscriptionTitle) {
       message = buildMembershipTipMessage(userName, tip, currency, subscriptionTitle, durationLabel, projectLabel)
     }
 
     if (message) {
       showCard(message)
+    } else if (total > 0) {
+      console.warn('[ulule-widget] No subscription message could be formed', data)
     }
-
-    console.warn('[ulule-widget] No subscription message could be formed', data)
   }
 
-  // MESSAGE BUILDERS
-
   function buildMembershipMessage(userName, subscriptionTitle, durationLabel, years, months, projectLabel) {
-    // New membership
+    const safeUserName = highlight(userName, 'username')
+    const safeTitle = highlight(`« ${subscriptionTitle} »`, 'reward')
+    const safeProjectLabel = projectLabel ? ` ${projectLabel}` : ''
+
     if (years === 0 && months === 0) {
-      return `Merci <span id="username">${userName}</span> pour le nouvel abonnement ${projectLabel} au niveau <span id="reward">« ${subscriptionTitle} »</span> !`
+      return `Merci ${safeUserName} pour le nouvel abonnement${safeProjectLabel} au niveau ${safeTitle} !`
     }
 
-    // Existing membership
-    return `Merci <span id="username">${userName}</span> pour les ${durationLabel} d'abonnement au niveau <span id="reward">« ${subscriptionTitle} »</span> !`
+    return `Merci ${safeUserName} pour les ${escapeHtml(durationLabel)} d'abonnement au niveau ${safeTitle} !`
   }
 
   function buildMembershipTipMessage(userName, tip, currency, subscriptionTitle, durationLabel, projectLabel) {
-    const tipLabel = `Merci <span id="username">${userName}</span> pour le don de <span id="tip">${tip} ${currency}</span> ${projectLabel} !`
+    const currencyLabel = currency || ''
+    const tipLabel = `Merci ${highlight(userName, 'username')} pour le don de ${highlight(
+      `${formatAmount(tip)} ${currencyLabel}`,
+      'tip',
+    )}${projectLabel ? ` ${projectLabel}` : ''} !`
+    const subscriptionLabel = `Abonné·e au niveau ${highlight(`« ${subscriptionTitle} »`, 'reward')}`
 
     if (!durationLabel) {
-      return `${tipLabel} Abonné·e au niveau <span id="reward">« ${subscriptionTitle} »</span></p>`
+      return `${tipLabel} ${subscriptionLabel}`
     }
 
-    return `${tipLabel} Abonné·e au niveau <span id="reward">« ${subscriptionTitle} »</span> depuis ${durationLabel}</p>`
+    return `${tipLabel} ${subscriptionLabel} depuis ${escapeHtml(durationLabel)}`
   }
 
   function buildRecurringDonationMessage(userName, total, currency, durationLabel, projectLabel) {
-    const baseMessage = `Merci <span id="username">${userName}</span> pour le don mensuel de <span id="tip">${total} ${currency}</span>`
+    const currencyLabel = currency || ''
+    const baseMessage = `Merci ${highlight(userName, 'username')} pour le don mensuel de ${highlight(
+      `${formatAmount(total)} ${currencyLabel}`,
+      'tip',
+    )}`
 
     if (!durationLabel) {
-      return `${baseMessage} ${projectLabel} !`
+      return `${baseMessage}${projectLabel ? ` ${projectLabel}` : ''} !`
     }
 
-    return `${baseMessage} depuis ${durationLabel} ${projectLabel} !`
+    return `${baseMessage} depuis ${escapeHtml(durationLabel)}${projectLabel ? ` ${projectLabel}` : ''} !`
   }
-
-  // UI HELPERS
 
   function showCard(message) {
     const cardElement = document.createElement('div')
@@ -146,6 +152,7 @@ window.addEventListener('onWidgetLoad', async (obj) => {
       </div>`
 
     showElement(cardElement)
+    playNotificationSound()
   }
 
   function showElement(element) {
@@ -161,62 +168,231 @@ window.addEventListener('onWidgetLoad', async (obj) => {
     return '<div class="logo"></div>'
   }
 
-  // IN-HOUSE HELPERS
-
-  /**
-   * Capitalizes the first character of a given string.
-   */
-  function capitalize(s) {
-    return (s && String(s[0]).toUpperCase() + String(s).slice(1)) || ""
-  }
-
-  /**
-   * Formats a duration with years and months into a French label.
-   * Returns null if both are zero.
-   */
-  function getDurationLabel(years, months) {
-    const yearsLabel = getYearsLabel(years)
-
-    if (yearsLabel && months > 0) {
-      return `${yearsLabel} et ${months} mois`
+  function playNotificationSound() {
+    if (!settings.notificationSoundEnabled) {
+      return
     }
 
-    if (yearsLabel) {
-      return yearsLabel
-    }
-
-    if (months > 0) {
-      return `${months} mois`
-    }
-
-    return null
-  }
-
-  /**
-   * Retrieves the best-matched localized string from an i18n resource object.
-   */
-  function getI18n(resource) {
-    if (resource[CURRENT_LOCALE]) {
-      return resource[CURRENT_LOCALE]
-    }
-
-    if (resource['en']) {
-      return resource['en']
-    }
-
-    return Object.values(resource)[0]
-  }
-
-  /**
-   * Returns a label for a given number of years.
-   */
-  function getYearsLabel(years) {
-    if (years === 1) {
-      return "1 an"
-    }
-
-    if (years > 0) {
-      return `${years} ans`
-    }
+    const source = normalizeSoundSource(settings.notificationSound) || DEFAULT_SOUND_URL
+    const audio = new Audio(source)
+    audio.play().catch((error) => {
+      console.warn('[ulule-widget] Failed to play notification sound', error)
+    })
   }
 })
+
+function normalizeSettings(fieldData) {
+  return {
+    blockBorderRadius: numberOrDefault(fieldData.blockBorderRadius, 8),
+    blockColor: fieldData.blockColor || '#FFFFFF',
+    blockOpacity: numberOrDefault(fieldData.blockOpacity, 95),
+    enableFreeTierAlert: booleanOrDefault(fieldData.enableFreeTierAlert, false),
+    fontColor: fieldData.textColor || '#232221',
+    fontFamily: normalizeFontFamily(fieldData.fontFamily) || 'Roboto',
+    fontSize: numberOrDefault(fieldData.fontSize, 16),
+    fontWeight: fieldData.fontWeight || '400',
+    highlightColor: fieldData.highlightColor || '#007199',
+    highlightFontSize: numberOrDefault(fieldData.highlightFontSize, 16),
+    highlightFontWeight: fieldData.highlightFontWeight || '700',
+    notificationSound: fieldData.notificationSound,
+    notificationSoundEnabled: booleanOrDefault(fieldData.notificationSoundEnabled, false),
+  }
+}
+
+function setCssVariables(settings) {
+  const root = document.documentElement
+  const rgb = hexToRgb(settings.blockColor)
+
+  root.dataset.ululeAlertBackground = hasDarkBackground(rgb) ? 'dark' : 'light'
+  root.style.setProperty('--ulule-alert-block-background-color-rgb', rgb.join(' '))
+  root.style.setProperty('--ulule-alert-block-border-radius', `${settings.blockBorderRadius}px`)
+  root.style.setProperty('--ulule-alert-block-opacity', String(Math.max(0, Math.min(settings.blockOpacity, 100)) / 100))
+  root.style.setProperty('--ulule-alert-font-color', settings.fontColor)
+  root.style.setProperty('--ulule-alert-font-family', quoteCssString(settings.fontFamily))
+  root.style.setProperty('--ulule-alert-font-size', `${settings.fontSize}px`)
+  root.style.setProperty('--ulule-alert-font-weight', settings.fontWeight)
+  root.style.setProperty('--ulule-alert-highlight-color', settings.highlightColor)
+  root.style.setProperty('--ulule-alert-highlight-font-size', `${settings.highlightFontSize}px`)
+  root.style.setProperty('--ulule-alert-highlight-font-weight', settings.highlightFontWeight)
+}
+
+function capitalize(value) {
+  const normalizedValue = String(value || '')
+  return normalizedValue ? normalizedValue.charAt(0).toUpperCase() + normalizedValue.slice(1) : ''
+}
+
+function buildGoogleFontUrl(fontFamily, weights = null) {
+  const family = normalizeFontFamily(fontFamily)
+    .split(/\s+/)
+    .map((part) => encodeURIComponent(part))
+    .join('+')
+  const weightSuffix = weights ? `:wght@${weights.join(';')}` : ''
+
+  return `https://fonts.googleapis.com/css2?family=${family}${weightSuffix}&display=swap`
+}
+
+function loadGoogleFont(fontFamily) {
+  const family = normalizeFontFamily(fontFamily)
+
+  if (!family) {
+    return
+  }
+
+  const alreadyLoaded = Array.from(document.querySelectorAll('link[data-ulule-google-font]')).some(
+    (link) => link.dataset.ululeGoogleFont === family,
+  )
+
+  if (alreadyLoaded) {
+    return
+  }
+
+  const link = document.createElement('link')
+  const fallbackUrl = buildGoogleFontUrl(family)
+
+  link.dataset.ululeGoogleFont = family
+  link.href = buildGoogleFontUrl(family, ['400', '500', '600', '700', '800'])
+  link.rel = 'stylesheet'
+  link.onerror = () => {
+    if (link.href !== fallbackUrl) {
+      link.href = fallbackUrl
+    }
+  }
+
+  document.head.append(link)
+}
+
+function normalizeFontFamily(fontFamily) {
+  return String(fontFamily || '')
+    .trim()
+    .replace(/^['"]|['"]$/g, '')
+}
+
+function quoteCssString(value) {
+  return `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+function booleanOrDefault(value, fallback) {
+  if (value === undefined || value === null || value === '') {
+    return fallback
+  }
+
+  if (typeof value === 'string') {
+    return value.toLowerCase() === 'true'
+  }
+
+  return Boolean(value)
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+function formatAmount(value) {
+  return String(value).replace('.', ',')
+}
+
+function getDurationLabel(years, months) {
+  const yearsLabel = getYearsLabel(years)
+
+  if (yearsLabel && months > 0) {
+    return `${yearsLabel} et ${months} mois`
+  }
+
+  if (yearsLabel) {
+    return yearsLabel
+  }
+
+  if (months > 0) {
+    return `${months} mois`
+  }
+
+  return null
+}
+
+function getI18n(resource, locale) {
+  if (!resource) {
+    return ''
+  }
+
+  if (typeof resource === 'string') {
+    return resource
+  }
+
+  if (resource[locale]) {
+    return resource[locale]
+  }
+
+  if (resource.en) {
+    return resource.en
+  }
+
+  return Object.values(resource)[0] || ''
+}
+
+function getYearsLabel(years) {
+  if (years === 1) {
+    return '1 an'
+  }
+
+  if (years > 0) {
+    return `${years} ans`
+  }
+
+  return null
+}
+
+function hexToRgb(color) {
+  const normalizedColor = String(color || '').replace('#', '')
+  const safeColor = normalizedColor.length === 3 ? normalizedColor.replace(/(.)/g, '$1$1') : normalizedColor
+  const value = Number.parseInt(safeColor, 16)
+
+  if (Number.isNaN(value)) {
+    return [255, 255, 255]
+  }
+
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255]
+}
+
+function hasDarkBackground(rgb) {
+  const [red, green, blue] = rgb.map((channel) => {
+    const value = channel / 255
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  })
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+  return luminance < 0.179
+}
+
+function highlight(value, type) {
+  return `<span class="highlight highlight--${type}">${escapeHtml(value)}</span>`
+}
+
+function normalizeSoundSource(source) {
+  if (Array.isArray(source)) {
+    return source[0]
+  }
+
+  if (source && typeof source === 'object') {
+    return source.url || source.soundUrl || source.src
+  }
+
+  return source
+}
+
+function numberOrDefault(value, fallback) {
+  if (value === undefined || value === null || value === '') {
+    return fallback
+  }
+
+  const number = Number(value)
+  return Number.isFinite(number) ? number : fallback
+}
+
+function numberOrZero(value) {
+  return numberOrDefault(value, 0)
+}

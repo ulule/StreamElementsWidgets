@@ -1,0 +1,30 @@
+<!--
+  Temporary StreamElements dashboard test helper for the Progress widget.
+  Paste this before the Progress widget script in the HTML tab, then remove it before release.
+-->
+<script>
+  window.ULULE_PROGRESS_MOCK_STATS = {
+    amount_raised: '6200',
+    committed: 6200,
+    goal: 5000,
+    orders_count: 154,
+    supporters_count: 132,
+    next_stage_goal: 7500,
+  }
+
+  const ululeOriginalFetch = window.fetch.bind(window)
+
+  window.fetch = function (input, init) {
+    const url = typeof input === 'string' ? input : input && input.url
+
+    if (url && url.includes('https://data.ulule.com/projects/')) {
+      return Promise.resolve(
+        new Response(JSON.stringify(window.ULULE_PROGRESS_MOCK_STATS), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+    }
+
+    return ululeOriginalFetch(input, init)
+  }
+</script>

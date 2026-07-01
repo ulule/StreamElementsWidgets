@@ -1,52 +1,137 @@
-@import url('https://fonts.googleapis.com/css?family=Oxanium:400,500');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ulule-progress-block-background-color-rgb: 255 255 255;
+  --ulule-progress-block-border-radius: 8px;
+  --ulule-progress-block-opacity: 0.95;
+  --ulule-progress-font-color: #007199;
+  --ulule-progress-font-family: 'Roboto';
+  --ulule-progress-font-size: 28px;
+  --ulule-progress-font-weight: 700;
+  --ulule-progress-goal-font-color: #232221;
+  --ulule-progress-background-color: #f6f1eb;
+  --ulule-progress-bar-color: #007199;
+  --ulule-progress-bar-font-color: #ffffff;
+  --ulule-progress-bar-font-size: 14px;
+  --ulule-progress-border-color: #f6f1eb;
+  --ulule-progress-border-radius: 4px;
+}
 
 * {
-  color: var(--font-color);
-  font-family: var(--font-family), sans-serif;
-  font-size: var(--font-size);
-  overflow: hidden;
+  box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.progress-card {
+  background-color: rgb(var(--ulule-progress-block-background-color-rgb) / var(--ulule-progress-block-opacity));
+  border-radius: var(--ulule-progress-block-border-radius);
+  box-shadow: 1px 2px 10px 0 rgba(89, 84, 78, 0.12);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 320px;
+  padding: 20px 24px 16px;
+  width: 374px;
+}
+
+.progress-card__header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-height: 32px;
+}
+
+.logo {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABLBAMAAAAVLh3GAAAAMFBMVEVMaXEAAAAXFh8CBwkAAAAEAQICAAEAAAAAAAAAAADlDU5HtuboD1KOCDAXPU4veZxwUCGqAAAAEHRSTlMA/h9AYu+B2KK/+d9/+/zqleDGrQAAAAlwSFlzAAALEwAACxMBAJqcGAAABKJJREFUeNqFVr1v21YQfyANRR6vFkURhR3WsaQU6GA5duNuVK0kzkh/1EmAFlIKt+lmyrDbbFYSJ80m2nENrxkND4Y7ejEyd+oYoEvX/gkd2t/dIyVKIZUD9MH3frx3d+93H0oNyY35J8e+9fTlnBopM693SIv1m5sNM+77FOOInK+zcOa+QH4+OTkRvfbjDFzIsJe3+EjjyyN+aKae28HW7mzv8SfWqR/HdnYTwDvYeJ588ysslMQjqNjrLeeHcUotYmmbFeJ3RRlPxGQj1ItqWCfMLNMbf1VVtSHj8TEDchurSoXWNIA4v42lFpGX4uE9ooMcFQ0AEWIbqkJaTQ3FJtmb1GUgRxYqW9asygqa7RrBBIA+25HbzriuHNGEUkEBR99NNy+WFjseMtBr0dYI4Ji4UFQBeSYsGCE/8N0IUFUO1EekUxLgx6WVBBrLr3/9PgvoINIR6WaYjgme3ZhvLLkpwFygc+ChRs684uenMcdbdgw0gzhbhBs3cbMbO33m1W2QoqnDSvbz6ell4NeUqvi0Ozc9PfOK6PEgECxzvDhxmlAfaVr0bbGzbkXAkKzI+bGASgt0yN4og7m7mgTmNSlFboImRfxWtpUBvXeEVjGwTo6rTCwv6Szz2DvkU6epTH+FgSTkMHyhJKhRx1smEZQsiAKEoO4AWNPAHEH/OKdkjTUTdZUR4Aubf2JzLwLuIc2KnLxtPuJvjkCB+Vpg9COQdqIHrCNtoafI3l+H1tBGciKESMLJK5yv1Gca2MGHC8AzJPLUeWuiRrO1uKq9VVXLjYHMoLKudQCG7XFq1mPgGVTMxkAff2MVUxfBVo66MZDOYK7HwDrtGUng9YugbdJWAmgiLgLsDgA/PQ9WAaz1jxag1QOWo51/3E4RoasOAms2NHXFmXwPWLNuk5eLHifPUPU8plkNSc3kNaOdSw44uBUR+dFbcQapUEawO3xdHe3073zzBb5rkfdXEh6k6zWUljp9Itzlk88jPujcmDx1JeCoFON4Xe5aVE5dgtDmC+blNVF4ptgRvu8calmeLN7foe/+veh3E6j89vRKqgSTcowcdoSrvvnf5UWy4P31/vQd6oI/AdCWMlhbKGcPyxd/vJN20cVnj5nlsYsDFchI/K8LYzxmcZdp2ldp4sX+a6bvcG65TN4V8fgw3kFGVfutZIHzNSxJ7hd1EN/IRuXI4V61FtdbVGQ4W5AGxsWAg/ig0WigEx9IhdEHjIWMyfOhnEGevBnJN1Ev+AXFZzGQClKO69NWVL/W13164PZ6rQhr7liyWNUeV46Sk4Sxr3FsuMmNSIzULxiNu42lxHyxTtaGlOpxMRESJNp2Muq35hItSce+MKojmGT3mn9Gx9RSpbhfIUDtUc2Imv1rcrJx+chnbUW6O5Er7SSVSiqzX9vuQPc+yLRwZVC/ne745wMKReVaalf3hwOCzvUsdfRwhqYh0++1pMF5rfmhMWR7H45HKQZtAjkwgxr3UscwGYWsFwk/9ikjFDKROg29N3+f58xmBp+Y47SBEffkWGbczGnY+FG3EN1JSqPGl8pxnFQPD92RA47RWObE3W0Mu/E/KboQ39AGEmwAAAAASUVORK5CYII=');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  flex: 0 0 32px;
+  height: 32px;
+  width: 32px;
+}
+
+:root[data-ulule-progress-background='dark'] .logo {
+  background-image: url('data:image/png;base64,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');
+}
+
 .amount {
-  margin: 20px 20px 8px;
+  color: var(--ulule-progress-font-color);
+  flex: 1 1 auto;
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: var(--ulule-progress-font-size);
+  font-weight: var(--ulule-progress-font-weight);
+  line-height: 1.05;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .amount__goal {
-  font-size: calc(var(--font-size) - var(--font-size) * 0.4);
+  color: var(--ulule-progress-goal-font-color);
+  font-size: calc(var(--ulule-progress-font-size) * 0.58);
+  font-weight: 600;
 }
 
 .progress-bar {
-  background-color: var(--progress-background-color);
-  border: 1px solid var(--progress-border-color);
-  border-radius: var(--progress-border-radius);
+  background-color: var(--ulule-progress-background-color);
+  border: 1px solid var(--ulule-progress-border-color);
+  border-radius: var(--ulule-progress-border-radius);
   display: none;
-  height: max-content;
-  margin: 0 20px;
+  height: 24px;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
-.progress-bar .progress-bar__content {
-  background-color: var(--progress-bar-color);
-  color: var(--progress-bar-font-color);
-  display: block;
-  font-size: var(--progress-bar-font-size);
+.progress-bar__content {
+  align-items: center;
+  background-color: var(--ulule-progress-bar-color);
+  color: var(--ulule-progress-bar-font-color);
+  display: flex;
+  font-size: var(--ulule-progress-bar-font-size);
+  font-weight: 700;
   height: 100%;
-  padding: 5px 0;
-  text-align: end;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: visible;
+  padding: 0 8px;
+  position: relative;
+  white-space: nowrap;
   width: 0;
 }
 
-.progress-bar .progress-bar__content::after {
-  content: '';
-  display: inline;
-  padding: 4px;
+.progress-bar__label {
+  color: var(--ulule-progress-bar-font-color);
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: var(--ulule-progress-bar-font-size);
+  line-height: 1;
+}
+
+.progress-bar__content--label-outside {
+  padding: 0;
+}
+
+.progress-bar__content--label-outside .progress-bar__label {
+  color: var(--ulule-progress-bar-color);
+  left: calc(100% + 6px);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .stretch-goal {
-  font-size: calc(var(--progress-bar-font-size) + var(--progress-bar-font-size) * 0.2);
-  margin: 8px 20px 0;
+  color: var(--ulule-progress-font-color);
+  display: none;
+  font-family: var(--ulule-progress-font-family), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: -4px;
   text-align: right;
 }

@@ -1,79 +1,129 @@
 {
   "projectNumericalId": {
     "label": "Identifiant numérique du projet",
-    "type": "number"
+    "type": "number",
+    "group": "Projet"
   },
   "refreshInterval": {
     "label": "Intervalle de rechargement (secondes)",
     "min": 5,
     "step": 1,
     "type": "number",
-    "value": 30
+    "value": 20,
+    "group": "Projet"
   },
-  "currency": {
-    "label": "Devise",
-    "type": "text",
-    "value": "€"
+  "showNextStageGoal": {
+    "label": "Afficher le prochain palier",
+    "type": "checkbox",
+    "value": true,
+    "group": "Objectif"
   },
-  "presaleSuffix": {
-    "label": "Suffixe des préventes",
+  "suffix": {
+    "label": "Suffixe",
     "type": "text",
-    "value": "préventes"
+    "value": "€",
+    "group": "Objectif"
+  },
+  "showSuffixOnCurrentValue": {
+    "label": "Afficher le suffixe sur le montant collecté",
+    "type": "checkbox",
+    "value": true,
+    "group": "Objectif"
   },
   "fontColor": {
-    "label": "Couleur du texte (collecté)",
+    "label": "Couleur du texte",
     "type": "colorpicker",
-    "value": "#ffffff"
+    "value": "#007199",
+    "group": "Texte"
   },
   "fontFamily": {
     "label": "Police",
-    "type": "text",
-    "value": "Oxanium"
+    "type": "googleFont",
+    "value": "Roboto",
+    "group": "Texte"
   },
   "fontSize": {
-    "label": "Taille du texte (collecté)",
+    "label": "Taille du texte",
     "step": 1,
     "type": "number",
-    "value": 16
+    "value": 28,
+    "min": 12,
+    "group": "Texte"
   },
-  "targetPercentage": {
-    "label": "Pourcentage cible",
-    "min": 100,
+  "fontWeight": {
+    "label": "Graisse du texte",
+    "type": "dropdown",
+    "value": "700",
+    "options": {
+      "400": "Regular",
+      "500": "Medium",
+      "600": "Semi Bold",
+      "700": "Bold",
+      "800": "Extra Bold"
+    },
+    "group": "Texte"
+  },
+  "blockColor": {
+    "label": "Couleur du bloc",
+    "type": "colorpicker",
+    "value": "#FFFFFF",
+    "group": "Bloc"
+  },
+  "blockOpacity": {
+    "label": "Opacité du bloc",
+    "type": "slider",
+    "value": 95,
+    "min": 0,
+    "max": 100,
     "step": 1,
+    "group": "Bloc"
+  },
+  "blockBorderRadius": {
+    "label": "Courbure du bloc",
     "type": "number",
-    "value": 100
+    "value": 8,
+    "min": 0,
+    "step": 1,
+    "group": "Bloc"
   },
   "progressBackgroundColor": {
     "label": "Couleur de fond de la progression",
     "type": "colorpicker",
-    "value": "transparent"
+    "value": "#F6F1EB",
+    "group": "Progression"
   },
   "progressBarColor": {
     "label": "Couleur de la barre de progression",
     "type": "colorpicker",
-    "value": "#02715c"
+    "value": "#007199",
+    "group": "Progression"
   },
   "progressBorderColor": {
     "label": "Couleur de bordure de la progression",
     "type": "colorpicker",
-    "value": "#02715c"
+    "value": "#F6F1EB",
+    "group": "Progression"
   },
   "progressBorderRadius": {
-    "label": "Courbure de la bordure de progression",
+    "label": "Courbure de la progression",
     "min": 0,
     "step": 1,
     "type": "number",
-    "value": 4
+    "value": 4,
+    "group": "Progression"
   },
   "progressBarFontColor": {
-    "label": "Couleur du texte de progression",
+    "label": "Couleur du pourcentage",
     "type": "colorpicker",
-    "value": "#ffffff"
+    "value": "#FFFFFF",
+    "group": "Progression"
   },
   "progressBarFontSize": {
-    "label": "Taille du texte de progression",
+    "label": "Taille du pourcentage",
     "step": 1,
     "type": "number",
-    "value": 14
+    "value": 14,
+    "min": 10,
+    "group": "Progression"
   }
 }
