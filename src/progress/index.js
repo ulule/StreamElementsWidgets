@@ -147,6 +147,7 @@ function setCssVariables(settings) {
   const root = document.documentElement
   const rgb = hexToRgb(settings.blockColor)
 
+  root.dataset.ululeProgressBackground = hasDarkBackground(rgb) ? 'dark' : 'light'
   root.style.setProperty('--ulule-progress-block-background-color-rgb', rgb.join(' '))
   root.style.setProperty('--ulule-progress-block-border-radius', `${settings.blockBorderRadius}px`)
   root.style.setProperty(
@@ -250,6 +251,16 @@ function hexToRgb(color) {
   }
 
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255]
+}
+
+function hasDarkBackground(rgb) {
+  const [red, green, blue] = rgb.map((channel) => {
+    const value = channel / 255
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  })
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+  return luminance < 0.179
 }
 
 function numberOrDefault(value, fallback) {

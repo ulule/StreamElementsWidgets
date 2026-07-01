@@ -41,6 +41,7 @@ function createDocument() {
   return {
     cssVariables,
     documentElement: {
+      dataset: {},
       style: {
         setProperty(name, value) {
           cssVariables.set(name, value)
@@ -281,6 +282,7 @@ async function createProgressHarness(stats, fieldData) {
   await new Promise((resolve) => setImmediate(resolve))
 
   return {
+    document,
     cssVariables: document.cssVariables,
     element(selector) {
       return jqueryMock.elements.get(selector)
@@ -363,6 +365,19 @@ test('Progress shows an editor error without a project ID', async () => {
   const harness = await createProgressHarness(await loadJSON('./progress-stats/base-goal-financial.json'), {})
 
   assert.equal(markupToText(harness.element('.amount').html), 'Please input a valid project ID')
+})
+
+test('Widgets select a contrasting logo for the block color', async () => {
+  const stats = await loadJSON('./progress-stats/base-goal-financial.json')
+  const alertOnLight = await createAlertHarness({ blockColor: '#FFFFFF' })
+  const alertOnDark = await createAlertHarness({ blockColor: '#121212' })
+  const progressOnLight = await createProgressHarness(stats, { blockColor: '#FFFFFF', projectNumericalId: 1 })
+  const progressOnDark = await createProgressHarness(stats, { blockColor: '#121212', projectNumericalId: 1 })
+
+  assert.equal(alertOnLight.document.documentElement.dataset.ululeAlertBackground, 'light')
+  assert.equal(alertOnDark.document.documentElement.dataset.ululeAlertBackground, 'dark')
+  assert.equal(progressOnLight.document.documentElement.dataset.ululeProgressBackground, 'light')
+  assert.equal(progressOnDark.document.documentElement.dataset.ululeProgressBackground, 'dark')
 })
 
 test('Widget field definitions expose the approved defaults', async () => {
