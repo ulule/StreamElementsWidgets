@@ -12,6 +12,44 @@ window.addEventListener('onWidgetLoad', (obj) => {
   function handleEventReceived(obj = {}) {
     const detail = obj.detail || {}
 
+    const listener = obj.detail.listener
+    const data = obj.detail.event
+
+    if (data.listener === 'widget-button') {
+      if (data.field === 'testNotification') {
+        const emulated = new CustomEvent('onEventReceived', {
+          detail: {
+            listener: 'order',
+            event: {
+              currency: '€',
+              order_total: '35',
+              project: {
+                lang: 'fr',
+                title: {
+                  fr: 'Un chouette projet',
+                  en: 'A nice project',
+                },
+              },
+              rewards: [
+                {
+                  price: '30',
+                  title: {
+                    fr: 'Le pack découverte',
+                    en: 'Discovery pack',
+                  },
+                },
+              ],
+              tip: '5',
+              user: {
+                user_name: 'Jane Doe',
+              },
+            },
+          },
+        })
+        window.dispatchEvent(emulated)
+      }
+    }
+
     if (detail.listener !== 'order') {
       return
     }
@@ -161,7 +199,7 @@ window.addEventListener('onWidgetLoad', (obj) => {
 
     setTimeout(() => {
       element.remove()
-    }, 5000)
+    }, settings.notificationScreenTime * 1000)
   }
 
   function logo() {
@@ -196,6 +234,7 @@ function normalizeSettings(fieldData) {
     highlightFontWeight: fieldData.highlightFontWeight || '700',
     notificationSound: fieldData.notificationSound,
     notificationSoundEnabled: booleanOrDefault(fieldData.notificationSoundEnabled, false),
+    notificationScreenTime: numberOrDefault(fieldData.notificationScreenTime, 3),
   }
 }
 

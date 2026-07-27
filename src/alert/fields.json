@@ -1,4 +1,12 @@
 {
+  "notificationScreenTime": {
+    "label": "Temps d'affichage de la notification en secondes",
+    "type": "number",
+    "value": 3,
+    "min": 1,
+    "step": 1,
+    "group": "Notification"
+  },
   "notificationSoundEnabled": {
     "label": "Son de notification",
     "type": "checkbox",
@@ -8,6 +16,12 @@
   "notificationSound": {
     "label": "Son personnalisé",
     "type": "sound-input",
+    "group": "Notification"
+  },
+  "testNotification": {
+    "label": "Tester la notification",
+    "type": "button",
+    "value": "test",
     "group": "Notification"
   },
   "enableFreeTierAlert": {
