@@ -24,7 +24,12 @@ The following will list basic installation instructions, assuming you're already
 - Save the newly created overlay
 - Share your StreamElements Account ID and JWT Token with your coach at Ulule to finish activating the widget
 
-⚠️ If you were using the widget prior to July 2026, you must copy the new `index.html` content into your StreamElements **HTML** tab AND the new `fields.json` content into your **Fields** tab. Older installs still load the previous direct socket script and will not receive the new broadcast events correctly. The external HTML/JS cannot save those fields automatically.
+⚠️ If you were using the widget prior to August 2026, you must copy the new `index.html` content into your StreamElements **HTML** tab AND the new `fields.json` content into your **Fields** tab. Older installs still load the previous direct socket script and will not receive the new broadcast events correctly. The external HTML/JS cannot save those fields automatically.
+
+August 2026 update note:
+
+- You can now configure the alert display duration.
+- You can now test the alert using a button in the Notification settings.
 
 ### Advanced configuration:
 
