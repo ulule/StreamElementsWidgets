@@ -234,7 +234,7 @@ function normalizeSettings(fieldData) {
     highlightFontWeight: fieldData.highlightFontWeight || '700',
     notificationSound: fieldData.notificationSound,
     notificationSoundEnabled: booleanOrDefault(fieldData.notificationSoundEnabled, false),
-    notificationScreenTime: numberOrDefault(fieldData.notificationScreenTime, 3),
+    notificationScreenTime: numberOrDefault(fieldData.notificationScreenTime, 5),
   }
 }
 
