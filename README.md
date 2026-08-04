@@ -26,11 +26,6 @@ The following will list basic installation instructions, assuming you're already
 
 ⚠️ If you were using the widget prior to August 2026, you must copy the new `index.html` content into your StreamElements **HTML** tab AND the new `fields.json` content into your **Fields** tab. Older installs still load the previous direct socket script and will not receive the new broadcast events correctly. The external HTML/JS cannot save those fields automatically.
 
-August 2026 update note:
-
-- You can now configure the alert display duration.
-- You can now test the alert using a button in the Notification settings.
-
 ### Advanced configuration:
 
 The Fields tab exposes the supported visual options: font, text color, highlighted text color, block color, block opacity, block radius, optional notification sound, and optional free-tier membership alerts.
