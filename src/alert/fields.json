@@ -2,7 +2,7 @@
   "notificationScreenTime": {
     "label": "Temps d'affichage de la notification en secondes",
     "type": "number",
-    "value": 3,
+    "value": 5,
     "min": 1,
     "step": 1,
     "group": "Notification"
