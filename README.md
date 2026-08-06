@@ -12,7 +12,7 @@ The following will list basic installation instructions, assuming you're already
 
 ## Alert widget
 
-![Ulule Alert Widget](https://github.com/user-attachments/assets/8a6cee26-a608-4857-b155-24c198c02437)
+<img width="1406" height="196" alt="Ulule Alert Widget" src="https://github.com/user-attachments/assets/6898d788-fe0a-465b-8e1d-60a50feacc8d" />
 
 ### Steps:
 
@@ -24,7 +24,7 @@ The following will list basic installation instructions, assuming you're already
 - Save the newly created overlay
 - Share your StreamElements Account ID and JWT Token with your coach at Ulule to finish activating the widget
 
-⚠️ If you were using the widget prior to July 2026, you must copy the new `index.html` content into your StreamElements **HTML** tab AND the new `fields.json` content into your **Fields** tab. Older installs still load the previous direct socket script and will not receive the new broadcast events correctly. The external HTML/JS cannot save those fields automatically.
+⚠️ If you were using the widget prior to August 2026, you must copy the new `index.html` content into your StreamElements **HTML** tab AND the new `fields.json` content into your **Fields** tab. Older installs still load the previous direct socket script and will not receive the new broadcast events correctly. The external HTML/JS cannot save those fields automatically.
 
 ### Advanced configuration:
 
@@ -157,7 +157,7 @@ Keep the StreamElements overlay preview open while sending the events. For `free
 
 ## Progress widget
 
-![Ulule Progress Widget](https://github.com/user-attachments/assets/75bacd91-9ffd-47fa-bb23-450148ea1523)
+<img width="734" height="304" alt="Ulule Progress Widget" src="https://github.com/user-attachments/assets/4f3e3d82-7b8f-4da7-9ca3-e90be5c80a67" />
 
 ### Steps:
 
@@ -209,3 +209,23 @@ npm test
 ```
 
 The suite covers all alert fixtures, event-data escaping, free-tier behavior, Progress calculations, legacy suffix compatibility, field defaults, and editor errors.
+
+## Changelog
+
+### August 2026 - Alert controls
+
+- Added a configurable alert display duration, with a default of 5 seconds.
+- Added a `Tester la notification` button to preview an example order directly from the StreamElements widget settings.
+- Existing Alert widget users must copy the latest `fields.json` content into the StreamElements **Fields** tab to expose the new controls.
+
+### July 2026 - Alert and Progress widget overhaul
+
+- Redesigned both widgets with the new Ulule visual identity, responsive layouts, and logos that adapt automatically to light and dark block backgrounds.
+- Migrated Alert event delivery from the retired StreamElements channel socket endpoint to Overlay Broadcast events.
+- Added a complete **Fields** configuration for the Alert widget and expanded the Progress fields, making the supported visual settings editable from StreamElements.
+- Expanded Alert support for reward orders, multiple rewards, anonymous donations, paid and free memberships, recurring donations, and membership tips.
+- Added optional notification sounds and optional free-tier membership alerts, both disabled by default.
+- Added dynamic loading for fonts selected through the StreamElements Google Font field.
+- Updated Progress to support financial, presale, and membership projects, configurable suffixes, and optional suffix display on the current value.
+- Replaced `Pourcentage cible` with automatic next-stage targeting through `Afficher le prochain palier`, with fallback to the main project goal.
+- Added local event fixtures, dashboard testing helpers, and a dependency-free automated regression suite for both widgets.
